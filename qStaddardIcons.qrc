@@ -1,0 +1,14 @@
+<RCC>
+    <qresource prefix="/">
+        <file>tables/actions.html</file>
+        <file>tables/animations.html</file>
+        <file>tables/apps.html</file>
+        <file>tables/categories.html</file>
+        <file>tables/devices.html</file>
+        <file>tables/emblems.html</file>
+        <file>tables/emotes.html</file>
+        <file>tables/mimetypes.html</file>
+        <file>tables/places.html</file>
+        <file>tables/status.html</file>
+    </qresource>
+</RCC>

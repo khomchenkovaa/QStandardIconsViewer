@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>StandardIconsWidget</class>
+ <widget class="QWidget" name="StandardIconsWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>977</width>
+    <height>637</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Standard Icon Names</string>
+  </property>
+  <layout class="QHBoxLayout" name="horizontalLayout">
+   <item>
+    <widget class="QTabWidget" name="tabWidget">
+     <property name="currentIndex">
+      <number>7</number>
+     </property>
+     <widget class="QWidget" name="tabActions">
+      <attribute name="title">
+       <string>Actions</string>
+      </attribute>
+      <attribute name="toolTip">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Icons which are generally used in menus and dialogs for interacting with the user.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <widget class="QTreeWidget" name="treeActions">
+         <property name="columnCount">
+          <number>2</number>
+         </property>
+         <attribute name="headerDefaultSectionSize">
+          <number>200</number>
+         </attribute>
+         <column>
+          <property name="text">
+           <string>Name</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Description</string>
+          </property>
+         </column>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tabAnimations">
+      <attribute name="title">
+       <string>Animations</string>
+      </attribute>
+      <attribute name="toolTip">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Animated images used to represent loading web sites, or other background processing which may be less suited to more verbose progress reporting in the user interface. Animations should be a PNG with frames which are the size of the directory the animation is in, tiled in a WxH grid. Implementations should determine the number of frames by dividing the image into its frames, and iterating from left to right, wrapping to the first frame, after rendering the last.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_4">
+       <item>
+        <widget class="QTreeWidget" name="treeAnimations">
+         <property name="columnCount">
+          <number>2</number>
+         </property>
+         <attribute name="headerDefaultSectionSize">
+          <number>200</number>
+         </attribute>
+         <column>
+          <property name="text">
+           <string>Name</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Description</string>
+          </property>
+         </column>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tabApplications">
+      <attribute name="title">
+       <string>Applications</string>
+      </attribute>
+      <attribute name="toolTip">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Icons that describe what an application is, for use in the Programs menu, window decorations, and the task list. These may or may not be generic depending on the application and its purpose. Applications which are to be considered part of the base desktop, such as the calculator or terminal, should use the generic icons specified in this specification, while more advanced applications such as web browsers and office applications should use branded icons which still give the user an idea of what function the application provides.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_5">
+       <item>
+        <widget class="QTreeWidget" name="treeApplications">
+         <property name="columnCount">
+          <number>2</number>
+         </property>
+         <attribute name="headerDefaultSectionSize">
+          <number>200</number>
+         </attribute>
+         <attribute name="headerMinimumSectionSize">
+          <number>18</number>
+         </attribute>
+         <column>
+          <property name="text">
+           <string>Name</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Description</string>
+          </property>
+         </column>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tabCategories">
+      <attribute name="title">
+       <string>Categories</string>
+      </attribute>
+      <attribute name="toolTip">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Icons that are used for categories in the Programs menu, or the Control Center, for separating applications, preferences, and settings for display to the user.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_6">
+       <item>
+        <widget class="QTreeWidget" name="treeCategories">
+         <property name="columnCount">
+          <number>2</number>
+         </property>
+         <attribute name="headerDefaultSectionSize">
+          <number>200</number>
+         </attribute>
+         <attribute name="headerMinimumSectionSize">
+          <number>28</number>
+         </attribute>
+         <column>
+          <property name="text">
+           <string>Name</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Description</string>
+          </property>
+         </column>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tabDevices">
+      <attribute name="title">
+       <string>Devices</string>
+      </attribute>
+      <attribute name="toolTip">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Icons for hardware that is contained within or connected to the computing device. Naming for extended devices in this group, is of the form &amp;lt;primary function&amp;gt;-&amp;lt;manufacturer&amp;gt;-&amp;lt;model&amp;gt;. This allows ease of fallback to the primary function device name, or ones more targeted for a specific series of models from a manufacturer. For example, a theme author may want to provide icons for different phones. The specific model icons could be named “phone-samsung-t809”, “phone-motorola-rokr”, and “phone-motorola-pebl”. However, the theme must provide a phone icon in the theme's style, so that devices not matching these models, will still have an appropriate icon. An exception to this rule is that the “media” icons do not need to include manufacturer names, as they are generic items, and may be available from many manufacturers. As a result, for media, the specific icons are to differentiate between different specific types of media. For exmaple, an artist may wish to provide icons for BluRay, DVD, HD-DVD, CD-ROM, and variations thereof. The specific media type icons should be named in the form, &amp;lt;primary function&amp;gt;-&amp;lt;specific format&amp;gt;. Some examples are “media-optical”, “media-optical-bd” and “media-optical-dvd”&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_7">
+       <item>
+        <widget class="QTreeWidget" name="treeDevices">
+         <property name="columnCount">
+          <number>2</number>
+         </property>
+         <attribute name="headerDefaultSectionSize">
+          <number>200</number>
+         </attribute>
+         <column>
+          <property name="text">
+           <string>Name</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Description</string>
+          </property>
+         </column>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tabEmblems">
+      <attribute name="title">
+       <string>Emblems</string>
+      </attribute>
+      <attribute name="toolTip">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Icons for tags and properties of files, that are displayed in the file manager. This context contains emblems for such things as “read-only” or “photos”.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_8">
+       <item>
+        <widget class="QTreeWidget" name="treeEmblems">
+         <property name="columnCount">
+          <number>2</number>
+         </property>
+         <attribute name="headerDefaultSectionSize">
+          <number>200</number>
+         </attribute>
+         <column>
+          <property name="text">
+           <string>Name</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Description</string>
+          </property>
+         </column>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tabEmotes">
+      <attribute name="title">
+       <string>Emotes</string>
+      </attribute>
+      <attribute name="toolTip">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Icons for emotions that are expressed through text chat applications such as :-) or :-P in IRC or instant messengers.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_9">
+       <item>
+        <widget class="QTreeWidget" name="treeEmotes">
+         <property name="columnCount">
+          <number>2</number>
+         </property>
+         <attribute name="headerDefaultSectionSize">
+          <number>200</number>
+         </attribute>
+         <column>
+          <property name="text">
+           <string>Name</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Description</string>
+          </property>
+         </column>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tabMimeTypes">
+      <attribute name="title">
+       <string>MimeTypes</string>
+      </attribute>
+      <attribute name="toolTip">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Icons for different types of data, such as audio or image files.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_11">
+       <item>
+        <widget class="QTreeWidget" name="treeMimeTypes">
+         <property name="columnCount">
+          <number>2</number>
+         </property>
+         <attribute name="headerDefaultSectionSize">
+          <number>200</number>
+         </attribute>
+         <column>
+          <property name="text">
+           <string>Name</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Description</string>
+          </property>
+         </column>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tabPlaces">
+      <attribute name="title">
+       <string>Places</string>
+      </attribute>
+      <attribute name="toolTip">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Icons used to represent locations, either on the local filesystem, or through remote connections. Folders, trash, and workgroups are some examples.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_3">
+       <item>
+        <widget class="QTreeWidget" name="treePlaces">
+         <property name="columnCount">
+          <number>2</number>
+         </property>
+         <attribute name="headerDefaultSectionSize">
+          <number>200</number>
+         </attribute>
+         <column>
+          <property name="text">
+           <string>Name</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Description</string>
+          </property>
+         </column>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tabStatus">
+      <attribute name="title">
+       <string>Status</string>
+      </attribute>
+      <attribute name="toolTip">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Icons for presenting status to the user. This context contains icons for warning and error dialogs, as well as for the current weather, appointment alarms, and battery status.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="QTreeWidget" name="treeStatus">
+         <property name="columnCount">
+          <number>2</number>
+         </property>
+         <attribute name="headerDefaultSectionSize">
+          <number>200</number>
+         </attribute>
+         <column>
+          <property name="text">
+           <string>Name</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Description</string>
+          </property>
+         </column>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources/>
+ <connections/>
+</ui>

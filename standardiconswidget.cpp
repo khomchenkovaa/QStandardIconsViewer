@@ -34,6 +34,7 @@ void StandardIconsWidget::init()
     initMimeTypes();
     initPlaces();
     initStatus();
+    initQt();
 }
 
 /******************************************************************/
@@ -121,6 +122,59 @@ void StandardIconsWidget::initStatus()
     QList<QTreeWidgetItem *> items = loadFromHtml("status");
     ui->treeStatus->addTopLevelItems(items);
 
+}
+
+/******************************************************************/
+
+void StandardIconsWidget::initQt()
+{
+    QList<QTreeWidgetItem *> result;
+    QDomDocument doc("name");
+    QString fileName = QString(":/tables/qt.html");
+    QFile file(fileName);
+    if (!file.open(QIODevice::ReadOnly)) {
+        qDebug() << "Cannot open for read" << fileName;
+        return;
+    }
+    QString errMsg;
+    int errLine = -1;
+    int errColumn = -1;
+    if (!doc.setContent(&file, false, &errMsg, &errLine, &errColumn)) {
+        qDebug() << "Error reading document\n" << errMsg << "\nline:" << errLine << ", column:" << errColumn;
+        file.close();
+        return;
+    }
+    file.close();
+
+    QDomElement docElem = doc.documentElement();
+    QDomElement htmlElem = doc.firstChildElement("html");
+    if (htmlElem.isNull()) {
+        qDebug() << "No html tag found";
+        return;
+    }
+    QDomElement bodyElem = htmlElem.firstChildElement("body");
+    if (bodyElem.isNull()) {
+        qDebug() << "No body tag found";
+        return;
+    }
+    QDomElement tableElem = bodyElem.firstChildElement("table");
+    if (tableElem.isNull()) {
+        qDebug() << "No table tag found";
+        return;
+    }
+    QDomElement trElem = tableElem.firstChildElement("tr");
+    for (; !trElem.isNull(); trElem = trElem.nextSiblingElement("tr")) {
+        QDomElement nameElem = trElem.firstChildElement("td");
+        if(nameElem.isNull()) continue;
+        QDomElement valueElem = nameElem.nextSiblingElement("td");
+        QDomElement descrElem = valueElem.nextSiblingElement("td");
+        QTreeWidgetItem *item = new QTreeWidgetItem();
+        item->setText(0, nameElem.firstChildElement("code").text().trimmed());
+        item->setText(1, descrElem.text().trimmed().replace("\n"," "));
+        item->setIcon(0, style()->standardIcon(static_cast<QStyle::StandardPixmap>(valueElem.firstChildElement("code").text().toInt())));
+        result.append(item);
+    }
+    ui->treeQt->addTopLevelItems(result);
 }
 
 /******************************************************************/

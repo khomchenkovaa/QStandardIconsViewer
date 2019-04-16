@@ -10,5 +10,6 @@
         <file>tables/mimetypes.html</file>
         <file>tables/places.html</file>
         <file>tables/status.html</file>
+        <file>tables/qt.html</file>
     </qresource>
 </RCC>

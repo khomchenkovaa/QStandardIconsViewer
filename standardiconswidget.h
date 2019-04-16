@@ -28,6 +28,7 @@ private:
     void initMimeTypes();
     void initPlaces();
     void initStatus();
+    void initQt();
     QList<QTreeWidgetItem*> loadFromHtml(QString name);
 };
 

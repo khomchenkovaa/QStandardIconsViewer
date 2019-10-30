@@ -7,6 +7,7 @@ QT_BEGIN_NAMESPACE
 class QComboBox;
 class QTreeWidget;
 class QTreeWidgetItem;
+class QPushButton;
 QT_END_NAMESPACE
 
 class IconThemeTab : public QWidget
@@ -17,6 +18,9 @@ public:
     ~IconThemeTab();
 
 private slots:
+    void doPrevious();
+    void doNext();
+    void updateButtons(int index);
     void updateView(const QString &ctxName);
 
 private:
@@ -25,6 +29,8 @@ private:
 
 private:
     QComboBox   *ctxName;
+    QPushButton *btnPrevious;
+    QPushButton *btnNext;
     QTreeWidget *iconList;
 };
 

@@ -6,6 +6,7 @@
 #include <QComboBox>
 #include <QTreeWidget>
 #include <QHeaderView>
+#include <QPushButton>
 #include <QtXml>
 
 /******************************************************************/
@@ -13,9 +14,12 @@
 IconThemeTab::IconThemeTab(QWidget *parent)
     : QWidget(parent),
       ctxName(new QComboBox(this)),
+      btnPrevious(new QPushButton(QIcon::fromTheme("go-previous"),QString(), this)),
+      btnNext(new QPushButton(QIcon::fromTheme("go-next"),QString(), this)),
       iconList(new QTreeWidget(this))
 {
     setupUi();
+    updateButtons(ctxName->currentIndex());
     updateView(ctxName->currentText());
 }
 
@@ -28,20 +32,60 @@ IconThemeTab::~IconThemeTab()
 
 /******************************************************************/
 
+void IconThemeTab::doPrevious()
+{
+    int idx = ctxName->currentIndex();
+    if (idx) {
+        idx--;
+        ctxName->setCurrentIndex(idx);
+    }
+}
+
+/******************************************************************/
+
+void IconThemeTab::doNext()
+{
+    int idx = ctxName->currentIndex();
+    if (idx < ctxName->count()-1) {
+        idx++;
+        ctxName->setCurrentIndex(idx);
+    }
+}
+
+/******************************************************************/
+
+void IconThemeTab::updateButtons(int index)
+{
+    btnPrevious->setEnabled(index);
+    btnNext->setEnabled(index < ctxName->count()-1);
+}
+
+/******************************************************************/
+
 void IconThemeTab::updateView(const QString &ctxName)
 {
     iconList->clear();
-    QList<QTreeWidgetItem *> items = loadFromHtml(ctxName);
-    iconList->addTopLevelItems(items);
+    iconList->addTopLevelItems(loadFromHtml(ctxName));
 }
 
 /******************************************************************/
 
 void IconThemeTab::setupUi()
 {
+    QSizePolicy sizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+    sizePolicy.setHorizontalStretch(0);
+    sizePolicy.setVerticalStretch(0);
+    sizePolicy.setHeightForWidth(ctxName->sizePolicy().hasHeightForWidth());
+    ctxName->setSizePolicy(sizePolicy);
     ctxName->addItems( QStringList() << "actions" << "animations" << "apps"
                        << "categories" << "devices" << "emblems" << "emotes"
                        << "mimetypes" << "places" << "status");
+
+    btnPrevious->setToolTip("Previous");
+    btnPrevious->setMaximumSize(QSize(27, 27));
+
+    btnNext->setToolTip("Next");
+    btnNext->setMaximumSize(QSize(27, 27));
 
     iconList->setColumnCount(2);
     iconList->header()->setDefaultSectionSize(200);
@@ -53,6 +97,8 @@ void IconThemeTab::setupUi()
     horizontalLayout->setContentsMargins(0, 0, 0, 0);
     horizontalLayout->addWidget(new QLabel("Context:", this));
     horizontalLayout->addWidget(ctxName);
+    horizontalLayout->addWidget(btnPrevious);
+    horizontalLayout->addWidget(btnNext);
 
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
     mainLayout->setSpacing(6);
@@ -62,6 +108,12 @@ void IconThemeTab::setupUi()
 
     connect(ctxName, SIGNAL(currentTextChanged(const QString &)),
             this, SLOT(updateView(const QString &)));
+    connect(ctxName, SIGNAL(currentIndexChanged(int)),
+            this, SLOT(updateButtons(int)));
+    connect(btnPrevious, SIGNAL(clicked()),
+            this, SLOT(doPrevious()));
+    connect(btnNext, SIGNAL(clicked()),
+            this, SLOT(doNext()));
 }
 
 /******************************************************************/

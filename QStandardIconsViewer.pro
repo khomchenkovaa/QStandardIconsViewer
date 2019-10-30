@@ -25,14 +25,19 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++11
 
 SOURCES += \
+        iconlisttab.cpp \
+        iconthemetab.cpp \
         main.cpp \
-        standardiconswidget.cpp
+        standardiconswidget.cpp \
+        standardpixmaptab.cpp
 
 HEADERS += \
-        standardiconswidget.h
+        iconlisttab.h \
+        iconthemetab.h \
+        standardiconswidget.h \
+        standardpixmaptab.h
 
-FORMS += \
-        standardiconswidget.ui
+FORMS +=
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

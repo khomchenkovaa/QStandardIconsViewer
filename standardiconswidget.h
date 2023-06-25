@@ -12,7 +12,7 @@ public:
     ~StandardIconsWidget();
 
 private:
-    void setupUi();
+    void setupUI();
 };
 
 #endif // STANDARDICONSWIDGET_H

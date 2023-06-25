@@ -20,7 +20,7 @@ private slots:
     void updateView(const QString &dirName);
 
 private:
-    void setupUi();
+    void setupUI();
 
 private:
     QLineEdit   *editName;

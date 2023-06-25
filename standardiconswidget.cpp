@@ -1,6 +1,7 @@
 #include "standardiconswidget.h"
 
 #include "iconthemetab.h"
+#include "iconmimetab.h"
 #include "standardpixmaptab.h"
 #include "iconlisttab.h"
 
@@ -9,7 +10,7 @@
 StandardIconsWidget::StandardIconsWidget(QWidget *parent) :
     QTabWidget(parent)
 {
-    setupUi();
+    setupUI();
 }
 
 /******************************************************************/
@@ -20,11 +21,12 @@ StandardIconsWidget::~StandardIconsWidget()
 
 /******************************************************************/
 
-void StandardIconsWidget::setupUi()
+void StandardIconsWidget::setupUI()
 {
     setWindowTitle("Standard Icon Viewer");
     resize(977, 637);
     addTab(new IconThemeTab(this), "freedesktop.org icons");
+    addTab(new IconMimeTab(this), "QMimeDatabase icons");
     addTab(new StandardPixmapTab(this), "Qt's Standard Pixmap");
     addTab(new IconListTab(this), "Files");
 }

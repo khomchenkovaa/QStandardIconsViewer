@@ -26,6 +26,7 @@ CONFIG += c++11
 
 SOURCES += \
         iconlisttab.cpp \
+        iconmimetab.cpp \
         iconthemetab.cpp \
         main.cpp \
         standardiconswidget.cpp \
@@ -33,6 +34,7 @@ SOURCES += \
 
 HEADERS += \
         iconlisttab.h \
+        iconmimetab.h \
         iconthemetab.h \
         standardiconswidget.h \
         standardpixmaptab.h

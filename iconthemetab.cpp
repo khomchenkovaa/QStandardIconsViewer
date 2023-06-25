@@ -18,7 +18,7 @@ IconThemeTab::IconThemeTab(QWidget *parent)
       btnNext(new QPushButton(QIcon::fromTheme("go-next"),QString(), this)),
       iconList(new QTreeWidget(this))
 {
-    setupUi();
+    setupUI();
     updateButtons(ctxName->currentIndex());
     updateView(ctxName->currentText());
 }
@@ -70,7 +70,7 @@ void IconThemeTab::updateView(const QString &ctxName)
 
 /******************************************************************/
 
-void IconThemeTab::setupUi()
+void IconThemeTab::setupUI()
 {
     QSizePolicy sizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
     sizePolicy.setHorizontalStretch(0);
@@ -91,6 +91,7 @@ void IconThemeTab::setupUi()
     iconList->header()->setDefaultSectionSize(200);
     iconList->headerItem()->setText(0, "Name");
     iconList->headerItem()->setText(1, "Description");
+    iconList->setAlternatingRowColors(true);
 
     QHBoxLayout *horizontalLayout = new QHBoxLayout();
     horizontalLayout->setSpacing(2);

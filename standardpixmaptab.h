@@ -15,7 +15,7 @@ public:
     ~StandardPixmapTab();
 
 private:
-    void setupUi();
+    void setupUI();
     QList<QTreeWidgetItem*> loadStandardPixmaps();
 };
 

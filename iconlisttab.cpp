@@ -16,7 +16,7 @@ IconListTab::IconListTab(QWidget *parent)
       editName(new QLineEdit(this)),
       iconList(new QListWidget(this))
 {
-    setupUi();
+    setupUI();
 }
 
 /******************************************************************/
@@ -55,12 +55,13 @@ void IconListTab::updateView(const QString &dirName)
 
 /******************************************************************/
 
-void IconListTab::setupUi()
+void IconListTab::setupUI()
 {
     editName->setReadOnly(true);
     QPushButton *btnDir = new QPushButton("...",this);
     btnDir->setMaximumSize(QSize(27, 27));
     iconList->setWrapping(true);
+    iconList->setAlternatingRowColors(true);
 
     QHBoxLayout *horizontalLayout = new QHBoxLayout();
     horizontalLayout->setSpacing(2);

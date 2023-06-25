@@ -24,7 +24,7 @@ private slots:
     void updateView(const QString &ctxName);
 
 private:
-    void setupUi();
+    void setupUI();
     QList<QTreeWidgetItem*> loadFromHtml(const QString &name);
 
 private:

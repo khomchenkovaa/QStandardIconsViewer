@@ -10,7 +10,7 @@
 StandardPixmapTab::StandardPixmapTab(QWidget *parent)
     : QWidget(parent)
 {
-    setupUi();
+    setupUI();
 }
 
 /******************************************************************/
@@ -22,18 +22,19 @@ StandardPixmapTab::~StandardPixmapTab()
 
 /******************************************************************/
 
-void StandardPixmapTab::setupUi()
+void StandardPixmapTab::setupUI()
 {
     QTreeWidget *iconList = new QTreeWidget(this);
     iconList->setColumnCount(3);
     iconList->header()->setDefaultSectionSize(250);
-    iconList->headerItem()->setText(0, "Constant");
+    iconList->headerItem()->setText(0, tr("Constant"));
     iconList->headerItem()->setTextAlignment(0, Qt::AlignCenter);
-    iconList->headerItem()->setText(1, "Value");
+    iconList->headerItem()->setText(1, tr("Value"));
     iconList->headerItem()->setTextAlignment(1, Qt::AlignCenter);
-    iconList->headerItem()->setText(2, "Description");
+    iconList->headerItem()->setText(2, tr("Description"));
     iconList->headerItem()->setTextAlignment(2, Qt::AlignCenter);
     iconList->setColumnWidth(1, 50);
+    iconList->setAlternatingRowColors(true);
 
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
     mainLayout->setSpacing(6);

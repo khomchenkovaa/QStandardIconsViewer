@@ -11,5 +11,6 @@
         <file>tables/places.html</file>
         <file>tables/status.html</file>
         <file>tables/qt.html</file>
+        <file>ttf/fontawesome.ttf</file>
     </qresource>
 </RCC>

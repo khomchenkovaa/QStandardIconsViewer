@@ -4,6 +4,7 @@
 #include "iconmimetab.h"
 #include "standardpixmaptab.h"
 #include "iconlisttab.h"
+#include "iconfonttab.h"
 
 /******************************************************************/
 
@@ -29,6 +30,7 @@ void StandardIconsWidget::setupUI()
     addTab(new IconMimeTab(this), "QMimeDatabase icons");
     addTab(new StandardPixmapTab(this), "Qt's Standard Pixmap");
     addTab(new IconListTab(this), "Files");
+    addTab(new IconFontTab(this), "Fonts");
 }
 
 /******************************************************************/

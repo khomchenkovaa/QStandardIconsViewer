@@ -24,7 +24,10 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 CONFIG += c++11
 
+include(qfonticon/qfonticon.pri)
+
 SOURCES += \
+        iconfonttab.cpp \
         iconlisttab.cpp \
         iconmimetab.cpp \
         iconthemetab.cpp \
@@ -33,6 +36,7 @@ SOURCES += \
         standardpixmaptab.cpp
 
 HEADERS += \
+        iconfonttab.h \
         iconlisttab.h \
         iconmimetab.h \
         iconthemetab.h \
@@ -48,3 +52,4 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 RESOURCES += \
     qStaddardIcons.qrc
+

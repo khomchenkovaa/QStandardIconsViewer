@@ -25,6 +25,12 @@ private:
 private:
     QLineEdit   *editName;
     QListWidget *iconList;
+private slots:
+    //void copyOnDoubleClick();
+
+    //void onTableCustomMenuRequested(const QPoint &pos);
+
+private:
 };
 
 #endif // ICONLISTTAB_H

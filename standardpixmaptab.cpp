@@ -1,14 +1,26 @@
 #include "standardpixmaptab.h"
+#include "infodlgmbox.h"
+#include "qapplication.h"
+#include "qclipboard.h"
 
 #include <QVBoxLayout>
 #include <QTreeWidget>
 #include <QHeaderView>
 #include <QtXml>
+#include <QMenu>
+#include <QPoint>
+
+enum {
+    ConstantColumn,
+    ValueColumn,
+    DescriptionColumn
+};
 
 /******************************************************************/
 
 StandardPixmapTab::StandardPixmapTab(QWidget *parent)
-    : QWidget(parent)
+    : QWidget(parent),
+    iconList(Q_NULLPTR)
 {
     setupUI();
 }
@@ -24,7 +36,7 @@ StandardPixmapTab::~StandardPixmapTab()
 
 void StandardPixmapTab::setupUI()
 {
-    QTreeWidget *iconList = new QTreeWidget(this);
+    iconList = new QTreeWidget(this);
     iconList->setColumnCount(3);
     iconList->header()->setDefaultSectionSize(250);
     iconList->headerItem()->setText(0, tr("Constant"));
@@ -33,7 +45,7 @@ void StandardPixmapTab::setupUI()
     iconList->headerItem()->setTextAlignment(1, Qt::AlignCenter);
     iconList->headerItem()->setText(2, tr("Description"));
     iconList->headerItem()->setTextAlignment(2, Qt::AlignCenter);
-    iconList->setColumnWidth(1, 50);
+    iconList->setColumnWidth(3, 50);
     iconList->setAlternatingRowColors(true);
 
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
@@ -42,7 +54,12 @@ void StandardPixmapTab::setupUI()
     mainLayout->addWidget(iconList);
 
     iconList->addTopLevelItems(loadStandardPixmaps());
+
+    iconList->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(iconList,&QWidget::customContextMenuRequested, this, &StandardPixmapTab::onTableCustomMenuRequested);
+    //connect(iconList,&StandardPixmapTab::copyOnDoubleClick,this,&QTreeWidget::itemSelectionChanged);
 }
+
 
 /******************************************************************/
 
@@ -89,14 +106,48 @@ QList<QTreeWidgetItem *> StandardPixmapTab::loadStandardPixmaps()
         QDomElement valueElem = nameElem.nextSiblingElement("td");
         QDomElement descrElem = valueElem.nextSiblingElement("td");
         QTreeWidgetItem *item = new QTreeWidgetItem();
-        item->setText(0, nameElem.firstChildElement("code").text().trimmed());
-        item->setText(1, valueElem.firstChildElement("code").text().trimmed());
-        item->setTextAlignment(1, Qt::AlignCenter);
-        item->setText(2, descrElem.text().trimmed().replace("\n"," "));
-        item->setIcon(0, style()->standardIcon(static_cast<QStyle::StandardPixmap>(valueElem.firstChildElement("code").text().toInt())));
+        item->setText(ConstantColumn, nameElem.firstChildElement("code").text().trimmed());
+        item->setText(ValueColumn, valueElem.firstChildElement("code").text().trimmed());
+        item->setTextAlignment(ValueColumn, Qt::AlignCenter);
+        item->setText(DescriptionColumn, descrElem.text().trimmed().replace("\n"," "));
+        item->setIcon(ConstantColumn, style()->standardIcon(static_cast<QStyle::StandardPixmap>(valueElem.firstChildElement("code").text().toInt())));
         result.append(item);
     }
     return result;
 }
+
+void StandardPixmapTab::copyOnDoubleClick()
+{
+//    connect(mouseDoubleClickEvent,QAction::triggered,this,[this](){
+//        auto curItem = iconList->currentItem();
+//        QApplication::clipboard()->setText(curItem->text(ConstantColumn));
+//    });
+}
+
+
+void StandardPixmapTab::onTableCustomMenuRequested(const QPoint &pos)
+{
+    QMenu * menu = new QMenu(this);
+    QAction * copyDevice = new QAction("Копировать", this);
+    QAction * deleteDevice = new QAction("Удалить", this);
+    menu->addAction(copyDevice);
+    menu->addAction(deleteDevice);
+
+    connect(copyDevice, &QAction::triggered, this, [this](){
+        auto curItem = iconList->currentItem();
+        QIcon icon = style()->standardIcon(static_cast<QStyle::StandardPixmap>(curItem->text(ValueColumn).toInt()));
+        QString text = QString("style()->standardIcon(%1)").arg(curItem->text(ConstantColumn));
+        InfoDlgMbox::info(this, icon, text);
+        qDebug() << "Копировать" << text;
+    });
+
+    connect(deleteDevice, &QAction::triggered, this, [this](){
+        auto curItem = iconList->currentItem();
+        qDebug() << "Удалить" << curItem->text(ConstantColumn);
+    });
+
+    menu->exec(QCursor::pos());
+}
+//works
 
 /******************************************************************/

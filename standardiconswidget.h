@@ -13,6 +13,7 @@ public:
 
 private:
     void setupUI();
+
 };
 
 #endif // STANDARDICONSWIDGET_H

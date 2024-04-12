@@ -16,12 +16,6 @@ StandardIconsWidget::StandardIconsWidget(QWidget *parent) :
 
 /******************************************************************/
 
-StandardIconsWidget::~StandardIconsWidget()
-{
-}
-
-/******************************************************************/
-
 void StandardIconsWidget::setupUI()
 {
     setWindowTitle("Standard Icon Viewer");

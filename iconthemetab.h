@@ -13,9 +13,18 @@ QT_END_NAMESPACE
 class IconThemeTab : public QWidget
 {
     Q_OBJECT
+
+    struct IconThemeTabUi {
+        QComboBox   *ctxName     = Q_NULLPTR;
+        QPushButton *btnPrevious = Q_NULLPTR;
+        QPushButton *btnNext     = Q_NULLPTR;
+        QTreeWidget *iconList    = Q_NULLPTR;
+
+        void setupUI(QWidget *parent = Q_NULLPTR);
+    };
+
 public:
     explicit IconThemeTab(QWidget *parent = nullptr);
-    ~IconThemeTab();
 
 private slots:
     void doPrevious();
@@ -24,14 +33,11 @@ private slots:
     void updateView(const QString &ctxName);
 
 private:
-    void setupUI();
+    void setupActions();
     QList<QTreeWidgetItem*> loadFromHtml(const QString &name);
 
 private:
-    QComboBox   *ctxName;
-    QPushButton *btnPrevious;
-    QPushButton *btnNext;
-    QTreeWidget *iconList;
+    IconThemeTabUi ui;
 };
 
 #endif // ICONTHEMETAB_H

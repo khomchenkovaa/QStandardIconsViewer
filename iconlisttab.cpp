@@ -12,28 +12,19 @@
 /******************************************************************/
 
 IconListTab::IconListTab(QWidget *parent)
-    : QWidget(parent),
-      editName(new QLineEdit(this)),
-      iconList(new QListWidget(this))
+    : QWidget(parent)
 {
-    setupUI();
-}
-
-/******************************************************************/
-
-IconListTab::~IconListTab()
-{
-    editName->deleteLater();
-    iconList->deleteLater();
+    ui.setupUI(this);
+    setupActions();
 }
 
 /******************************************************************/
 
 void IconListTab::doDirSelect()
 {
-    QString dirName = QFileDialog::getExistingDirectory(this, tr("Select Folder with icons"),editName->text());
+    QString dirName = QFileDialog::getExistingDirectory(this, tr("Select Folder with icons"), ui.editName->text());
     if (!dirName.isEmpty()) {
-        editName->setText(dirName);
+        ui.editName->setText(dirName);
     }
 }
 
@@ -41,45 +32,51 @@ void IconListTab::doDirSelect()
 
 void IconListTab::updateView(const QString &dirName)
 {
-    iconList->clear();
+    ui.iconList->clear();
     QDirIterator it(dirName, QDir::Files);
     while (it.hasNext()) {
         it.next();
         QPixmap pixmap(it.filePath());
         if (!pixmap.isNull()) {
             QListWidgetItem *item = new QListWidgetItem(QIcon(pixmap), it.fileName());
-            iconList->addItem(item);
+            ui.iconList->addItem(item);
         }
     }
 }
 
 /******************************************************************/
 
-void IconListTab::setupUI()
+void IconListTab::setupActions()
 {
+    connect(ui.btnDir,   &QPushButton::clicked,
+            this,        &IconListTab::doDirSelect);
+    connect(ui.editName, &QLineEdit::textChanged,
+            this,        &IconListTab::updateView);
+}
+
+/******************************************************************/
+
+void IconListTab::IconListTabUi::setupUI(QWidget *parent)
+{
+    editName = new QLineEdit(parent);
+    iconList = new QListWidget(parent);
+    btnDir   = new QPushButton("...",parent);
+
     editName->setReadOnly(true);
-    QPushButton *btnDir = new QPushButton("...",this);
-    btnDir->setMaximumSize(QSize(27, 27));
     iconList->setWrapping(true);
     iconList->setAlternatingRowColors(true);
+    btnDir->setMaximumSize(QSize(27, 27));
 
     QHBoxLayout *horizontalLayout = new QHBoxLayout();
     horizontalLayout->setSpacing(2);
     horizontalLayout->setContentsMargins(0, 0, 0, 0);
-    horizontalLayout->addWidget(new QLabel("Folder:", this));
+    horizontalLayout->addWidget(new QLabel("Folder:", parent));
     horizontalLayout->addWidget(editName);
     horizontalLayout->addWidget(btnDir);
 
-    QVBoxLayout *mainLayout = new QVBoxLayout(this);
+    QVBoxLayout *mainLayout = new QVBoxLayout(parent);
     mainLayout->setSpacing(6);
     mainLayout->setContentsMargins(11, 11, 11, 11);
     mainLayout->addLayout(horizontalLayout);
     mainLayout->addWidget(iconList);
-
-    connect(btnDir, SIGNAL(clicked()),
-            this, SLOT(doDirSelect()));
-    connect(editName, SIGNAL(textChanged(const QString &)),
-            this, SLOT(updateView(const QString &)));
 }
-
-/******************************************************************/

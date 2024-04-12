@@ -9,7 +9,6 @@ class StandardIconsWidget : public QTabWidget
 
 public:
     explicit StandardIconsWidget(QWidget *parent = nullptr);
-    ~StandardIconsWidget();
 
 private:
     void setupUI();

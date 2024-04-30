@@ -21,6 +21,7 @@ IconThemeTab::IconThemeTab(QWidget *parent)
     setupUI();
     updateButtons(ctxName->currentIndex());
     updateView(ctxName->currentText());
+
 }
 
 /******************************************************************/

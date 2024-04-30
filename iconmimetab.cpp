@@ -55,6 +55,7 @@ void IconMimeTab::setupUI()
     mainLayout->addWidget(iconList);
 
     iconList->addTopLevelItems(loadFromMimeDb());
+    connect(iconList,&QWidget::customContextMenuRequested, this, &IconMimeTab::onTableCustomMenuRequested);
 }
 
 /******************************************************************/
@@ -99,6 +100,7 @@ void IconMimeTab::onTableCustomMenuRequested(const QPoint &pos)
 
     connect(copyDevice, &QAction::triggered, this, [this](){
         auto curItem = IconListMime->currentItem();
+
         //QIcon icon = style()->standardIcon(static_cast<QStyle::StandardPixmap>(curItem->text(ValueColumn).toInt()));
         QString text = QString("style()->standardIcon(%1)").arg(curItem->text(0));
         InfoDlgMbox::info(this, text);

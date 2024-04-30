@@ -19,7 +19,7 @@ private:
     void setupUI();
     QList<QTreeWidgetItem*> loadStandardPixmaps();
 private slots:
-    void copyOnDoubleClick();
+    void copyOnDoubleClick(const QPoint &pos);
 
     void onTableCustomMenuRequested(const QPoint &pos);
 

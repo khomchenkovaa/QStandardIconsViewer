@@ -57,7 +57,8 @@ void StandardPixmapTab::setupUI()
 
     iconList->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(iconList,&QWidget::customContextMenuRequested, this, &StandardPixmapTab::onTableCustomMenuRequested);
-    //connect(iconList,&StandardPixmapTab::copyOnDoubleClick,this,&QTreeWidget::itemSelectionChanged);
+
+    connect(iconList,&QTreeWidget::itemDoubleClicked,this,&StandardPixmapTab::copyOnDoubleClick);
 }
 
 
@@ -117,19 +118,16 @@ QList<QTreeWidgetItem *> StandardPixmapTab::loadStandardPixmaps()
 }
 
 
-
-void StandardPixmapTab::copyOnDoubleClick(const QPoint &pos)
+void StandardPixmapTab::copyOnDoubleClick()
 {
-    // connect(this -> iconList, SIGNAL (doubleClicked (const QModelIndex & )), this,
-    //         SLOT (performSomeAction(const QModelIndex & )));
 
-    // connect(mouseDoubleClickEvent(), &QAction::triggered, this, [this](){
-    //     auto curItem = iconList->currentItem();
-    //     QClipboard *clipboard = QGuiApplication::clipboard();
-    //     clipboard->setText(QString("style()->standardIcon(%1)").arg(curItem->text(ConstantColumn)));
-    //     qDebug() << "Копировать" << curItem->text(ConstantColumn);
-    // });
+    auto curItem = iconList->currentItem();
+    QClipboard *clipboard = QGuiApplication::clipboard();
+    clipboard->setText(QString("style()->standardIcon(%1)").arg(curItem->text(ConstantColumn)));
+    qDebug() << "Копировать" << curItem->text(ConstantColumn);
 }
+
+//works!!!
 
 
 void StandardPixmapTab::onTableCustomMenuRequested(const QPoint &pos)

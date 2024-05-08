@@ -1,4 +1,5 @@
 #include "iconmimetab.h"
+#include "qclipboard.h"
 #include "qdebug.h"
 #include "infodlgmbox.h"
 
@@ -10,6 +11,7 @@
 #include <QMimeDatabase>
 #include <QMenu>
 #include <QPoint>
+#include <QGuiApplication>
 /******************************************************************/
 
 enum {
@@ -36,7 +38,7 @@ IconMimeTab::~IconMimeTab()
 
 void IconMimeTab::setupUI()
 {
-    QTreeWidget *iconList = new QTreeWidget(this);
+    iconList = new QTreeWidget(this);
     iconList->setColumnCount(4);
     iconList->header()->setDefaultSectionSize(200);
     iconList->headerItem()->setText(NameColumn, "Name");
@@ -55,7 +57,10 @@ void IconMimeTab::setupUI()
     mainLayout->addWidget(iconList);
 
     iconList->addTopLevelItems(loadFromMimeDb());
-    connect(iconList,&QWidget::customContextMenuRequested, this, &IconMimeTab::onTableCustomMenuRequested);
+
+    iconList->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(iconList,&QWidget::customContextMenuRequested, this, &IconMimeTab::onTableCustomMenuRequestedMime);
+    connect(iconList,&QTreeWidget::itemDoubleClicked,this,&IconMimeTab::copyOnDoubleClick);
 }
 
 /******************************************************************/
@@ -87,29 +92,34 @@ QList<QTreeWidgetItem *> IconMimeTab::loadFromMimeDb()
 
 void IconMimeTab::copyOnDoubleClick()
 {
+        auto curItem = iconList->currentItem();
+        QClipboard *clipboard = QGuiApplication::clipboard();
+        clipboard->setText(QString("%1").arg(curItem->text(NameColumn)));
+        qDebug() << "Копировать" << curItem->text(NameColumn);
 
 }
 
-void IconMimeTab::onTableCustomMenuRequested(const QPoint &pos)
+void IconMimeTab::onTableCustomMenuRequestedMime(const QPoint &pos)
 {
     QMenu * menu = new QMenu(this);
-    QAction * copyDevice = new QAction("Копировать", this);
-    QAction * deleteDevice = new QAction("Удалить", this);
-    menu->addAction(copyDevice);
-    menu->addAction(deleteDevice);
+    QAction * showToCopy = new QAction("Показать", this);
+    QAction * copyOnClick = new QAction("Копировать", this);
+    menu->addAction(showToCopy);
+    menu->addAction(copyOnClick);
 
-    connect(copyDevice, &QAction::triggered, this, [this](){
-        auto curItem = IconListMime->currentItem();
-
-        //QIcon icon = style()->standardIcon(static_cast<QStyle::StandardPixmap>(curItem->text(ValueColumn).toInt()));
-        QString text = QString("style()->standardIcon(%1)").arg(curItem->text(0));
-        InfoDlgMbox::info(this, text);
-        qDebug() << "Копировать" << text;
+    connect(showToCopy, &QAction::triggered, this, [this](){
+        auto curItem = iconList->currentItem();
+        QIcon icon = style()->standardIcon(static_cast<QStyle::StandardPixmap>(curItem->text(NameColumn).toInt()));
+        QString text = QString("%1").arg(curItem->text(NameColumn));
+        InfoDlgMbox::info(this, icon, text);
+        qDebug() << "Показать" << text;
     });
 
-    connect(deleteDevice, &QAction::triggered, this, [this](){
-        auto curItem = IconListMime->currentItem();
-        qDebug() << "Удалить" << curItem->text(0);
+    connect(copyOnClick, &QAction::triggered, this, [this](){
+        auto curItem = iconList->currentItem();
+        QClipboard *clipboard = QGuiApplication::clipboard();
+        clipboard->setText(QString("%1").arg(curItem->text(NameColumn)));
+        qDebug() << "Копировать" << curItem->text(NameColumn);
     });
 
     menu->exec(QCursor::pos());

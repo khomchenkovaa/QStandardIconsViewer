@@ -21,10 +21,11 @@ private:
 private slots:
     void copyOnDoubleClick();
 
-    void onTableCustomMenuRequested(const QPoint &pos);
+    void onTableCustomMenuRequestedMime(const QPoint &pos);
 
 private:
-    QTreeWidget *IconListMime;
+    //QTreeWidget *IconListMime;
+    QTreeWidget *iconList;
 };
 
 #endif // ICONMIMETAB_H

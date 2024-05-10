@@ -1,4 +1,10 @@
 #include "iconlisttab.h"
+#include "qapplication.h"
+#include "qclipboard.h"
+#include "qdebug.h"
+#include "qmenu.h"
+#include "infodlgmbox.h"
+#include "qmimedata.h"
 
 #include <QVBoxLayout>
 #include <QHBoxLayout>
@@ -34,6 +40,7 @@ void IconListTab::doDirSelect()
     QString dirName = QFileDialog::getExistingDirectory(this, tr("Select Folder with icons"),editName->text());
     if (!dirName.isEmpty()) {
         editName->setText(dirName);
+        savedPath=dirName;
     }
 }
 
@@ -80,6 +87,44 @@ void IconListTab::setupUI()
             this, SLOT(doDirSelect()));
     connect(editName, SIGNAL(textChanged(const QString &)),
             this, SLOT(updateView(const QString &)));
+
+    iconList->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(iconList,&QWidget::customContextMenuRequested, this, &IconListTab::onTableCustomMenuRequested);
+
+    connect(iconList,&QListWidget::itemDoubleClicked,this,&IconListTab::copyOnDoubleClick);
 }
 
+void IconListTab::copyOnDoubleClick()
+{
+    auto curItem = iconList->currentItem()->text();
+
+    QString dirNameToCopy = QFileDialog::getExistingDirectory(this, tr("Select Folder to save"));
+    if(QFile::copy(savedPath+QDir::separator()+curItem,dirNameToCopy+QDir::separator()+QDir::separator()+curItem)){
+        qDebug() << "Ok";
+        qDebug() << "Скопировано из " <<savedPath+QDir::separator()+curItem;
+        qDebug() << "Скопировано в " <<dirNameToCopy;
+    }else qDebug()<<"Not ok";
+
+}
+
+
+void IconListTab::onTableCustomMenuRequested(const QPoint &pos)
+{
+    QMenu * menu = new QMenu(this);
+    QAction * showToCopy = new QAction("Показать", this);
+    menu->addAction(showToCopy);
+
+    connect(showToCopy, &QAction::triggered, this, [this](){
+        auto curItem = iconList->currentItem()->text();
+
+        QString dirNameToCopy = QFileDialog::getExistingDirectory(this, tr("Select Folder to save"));
+        if(QFile::copy(savedPath+QDir::separator()+curItem,dirNameToCopy+QDir::separator()+QDir::separator()+curItem)){
+            qDebug() << "Ok";
+            qDebug() << "Скопировано из " <<savedPath+QDir::separator()+curItem;
+            qDebug() << "Скопировано в " <<dirNameToCopy;
+        }else qDebug()<<"Not ok";
+    });
+
+    menu->exec(QCursor::pos());
+}
 /******************************************************************/

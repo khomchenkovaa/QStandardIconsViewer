@@ -25,10 +25,11 @@ private:
 private:
     QLineEdit   *editName;
     QListWidget *iconList;
+    QString savedPath;
 private slots:
-    //void copyOnDoubleClick();
+    void copyOnDoubleClick();
 
-    //void onTableCustomMenuRequested(const QPoint &pos);
+    void onTableCustomMenuRequested(const QPoint &pos);
 
 private:
 };

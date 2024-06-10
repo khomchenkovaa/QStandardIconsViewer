@@ -32,6 +32,7 @@ private slots:
     void updateButtons(int index);
     void updateView(const QString &ctxName);
     void doCopy();
+    void doView();
     void showCustomMenu();
 
 private:

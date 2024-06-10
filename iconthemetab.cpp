@@ -78,6 +78,16 @@ void IconThemeTab::doCopy()
 
 /******************************************************************/
 
+void IconThemeTab::doView()
+{
+    auto item = ui.iconList->currentItem();
+    auto icon = QIcon::fromTheme(item->text(NameColumn));
+    auto text = QString("auto icon = QIcon::fromTheme(\"%1\");").arg(item->text(NameColumn));
+    ViewDlg::info(this, icon, text);
+}
+
+/******************************************************************/
+
 void IconThemeTab::showCustomMenu()
 {
     auto menu    = new QMenu(this);
@@ -86,13 +96,8 @@ void IconThemeTab::showCustomMenu()
     menu->addAction(actView);
     menu->addAction(actCopy);
 
-    connect(actView, &QAction::triggered, this, [this](){
-        auto item = ui.iconList->currentItem();
-        auto icon = QIcon::fromTheme(item->text(NameColumn));
-        auto text = QString("auto icon = QIcon::fromTheme(\"%1\")").arg(item->text(NameColumn));
-        ViewDlg::info(this, icon, text);
-    });
-
+    connect(actView, &QAction::triggered,
+            this,    &IconThemeTab::doView);
     connect(actCopy, &QAction::triggered,
             this,    &IconThemeTab::doCopy);
 
@@ -114,7 +119,7 @@ void IconThemeTab::setupActions()
     connect(ui.iconList,    &QWidget::customContextMenuRequested, 
             this,           &IconThemeTab::showCustomMenu);
     connect(ui.iconList,    &QTreeWidget::itemDoubleClicked,
-            this,           &IconThemeTab::doCopy);
+            this,           &IconThemeTab::doView);
 }
 
 /******************************************************************/

@@ -27,6 +27,7 @@ private slots:
     void doDirSelect();
     void updateView(const QString &dirName);
     void doCopy();
+    void doView();
     void showCustomMenu();
 
 private:

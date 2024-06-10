@@ -81,6 +81,16 @@ void IconFontTab::doCopy()
 
 /******************************************************************/
 
+void IconFontTab::doView()
+{
+    auto charCode = ui.iconList->currentItem()->text();
+    auto icon     = QFontIcon::icon(charCode.toInt(Q_NULLPTR, 16));
+    auto text     = QString("auto icon = QFontIcon::icon(%1);").arg(charCode);
+    ViewDlg::info(this, icon, text);
+}
+
+/******************************************************************/
+
 void IconFontTab::showCustomMenu()
 {
     auto menu    = new QMenu(this);
@@ -89,13 +99,8 @@ void IconFontTab::showCustomMenu()
     menu->addAction(actView);
     menu->addAction(actCopy);
 
-    connect(actView, &QAction::triggered, this, [this](){
-        auto charCode = ui.iconList->currentItem()->text();
-        auto icon     = QFontIcon::icon(charCode.toInt());
-        auto text     = QString("auto icon = QFontIcon::icon(%1)").arg(charCode);
-        ViewDlg::info(this, icon, text);
-    });
-
+    connect(actView, &QAction::triggered,
+            this,    &IconFontTab::doView);
     connect(actCopy, &QAction::triggered,
             this,    &IconFontTab::doCopy);
 
@@ -121,7 +126,7 @@ void IconFontTab::setupActions()
     connect(ui.iconList,    &QWidget::customContextMenuRequested,
             this,           &IconFontTab::showCustomMenu);
     connect(ui.iconList,    &QListWidget::itemDoubleClicked,
-            this,           &IconFontTab::doCopy);
+            this,           &IconFontTab::doView);
 }
 
 /******************************************************************/

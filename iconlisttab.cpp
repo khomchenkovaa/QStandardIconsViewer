@@ -61,7 +61,7 @@ void IconListTab::setupActions()
     connect(ui.iconList, &QWidget::customContextMenuRequested, 
             this,        &IconListTab::showCustomMenu);
     connect(ui.iconList, &QListWidget::itemDoubleClicked,
-            this,        &IconListTab::doCopy);
+            this,        &IconListTab::doView);
 }
 
 /******************************************************************/
@@ -105,25 +105,30 @@ void IconListTab::doCopy()
 
 /******************************************************************/
 
+void IconListTab::doView()
+{
+    auto fileName  = ui.iconList->currentItem()->text();
+    auto sourceDir = ui.editDir->text();
+    auto filePath  = sourceDir + QDir::separator() + fileName;
+    QPixmap pixmap(filePath);
+    auto icon = QIcon(pixmap);
+    auto text = QString("QPixmap pixmap(\"%1\");\nauto icon = QIcon(pixmap);")
+            .arg(filePath);
+    ViewDlg::info(this, icon, text);
+}
+
+/******************************************************************/
+
 void IconListTab::showCustomMenu()
 {
     auto menu    = new QMenu(this);
     auto actView = new QAction(QIcon::fromTheme("zoom-original"), tr("View"), this);
-    auto actCopy = new QAction(QIcon::fromTheme("edit-copy"), tr("Copy"), this);
+    auto actCopy = new QAction(QIcon::fromTheme("edit-copy"), tr("Copy file to"), this);
     menu->addAction(actView);
     menu->addAction(actCopy);
 
-    connect(actView, &QAction::triggered, this, [this](){
-        auto fileName  = ui.iconList->currentItem()->text();
-        auto sourceDir = ui.editDir->text();
-        auto filePath  = sourceDir + QDir::separator() + fileName;
-        QPixmap pixmap(filePath);
-        auto icon = QIcon(pixmap);
-        auto text = QString("QPixmap pixmap(\"%1\");\nauto icon = QIcon(pixmap);")
-                .arg(filePath);
-        ViewDlg::info(this, icon, text);
-    });
-
+    connect(actView, &QAction::triggered,
+            this,    &IconListTab::doView);
     connect(actCopy, &QAction::triggered,
             this,    &IconListTab::doCopy);
 

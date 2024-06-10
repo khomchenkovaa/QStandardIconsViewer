@@ -33,6 +33,7 @@ private slots:
     void updateButtons();
     void updateView();
     void doCopy();
+    void doView();
     void showCustomMenu();
 
 private:

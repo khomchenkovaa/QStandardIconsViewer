@@ -20,6 +20,7 @@ private:
 
 private slots:
     void doCopy();
+    void doView();
     void showCustomMenu();
 
 private:

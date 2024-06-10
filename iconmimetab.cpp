@@ -55,7 +55,7 @@ void IconMimeTab::setupUI()
     connect(iconList, &QWidget::customContextMenuRequested,
             this,     &IconMimeTab::showCustomMenu);
     connect(iconList, &QTreeWidget::itemDoubleClicked,
-            this,     &IconMimeTab::doCopy);
+            this,     &IconMimeTab::doView);
 }
 
 /******************************************************************/
@@ -96,6 +96,16 @@ void IconMimeTab::doCopy()
 
 /******************************************************************/
 
+void IconMimeTab::doView()
+{
+    auto item = iconList->currentItem();
+    auto icon = QIcon::fromTheme(item->text(NameColumn));
+    auto text = QString("auto icon = QIcon::fromTheme(\"%1\");").arg(item->text(NameColumn));
+    ViewDlg::info(this, icon, text);
+}
+
+/******************************************************************/
+
 void IconMimeTab::showCustomMenu()
 {
     auto menu    = new QMenu(this);
@@ -104,13 +114,8 @@ void IconMimeTab::showCustomMenu()
     menu->addAction(actView);
     menu->addAction(actCopy);
 
-    connect(actView, &QAction::triggered, this, [this](){
-        auto item = iconList->currentItem();
-        auto icon = QIcon::fromTheme(item->text(NameColumn));
-        auto text = QString("auto icon = QIcon::fromTheme(\"%1\")").arg(item->text(NameColumn));
-        ViewDlg::info(this, icon, text);
-    });
-
+    connect(actView, &QAction::triggered,
+            this,    &IconMimeTab::doView);
     connect(actCopy, &QAction::triggered,
             this,    &IconMimeTab::doCopy);
 

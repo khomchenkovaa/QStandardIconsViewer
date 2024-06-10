@@ -51,7 +51,7 @@ void StandardPixmapTab::setupUI()
     connect(iconList, &QWidget::customContextMenuRequested,
             this,     &StandardPixmapTab::showCustomMenu);
     connect(iconList, &QTreeWidget::itemDoubleClicked,
-            this,     &StandardPixmapTab::doCopy);
+            this,     &StandardPixmapTab::doView);
 }
 
 /******************************************************************/
@@ -120,6 +120,16 @@ void StandardPixmapTab::doCopy()
 
 /******************************************************************/
 
+void StandardPixmapTab::doView()
+{
+    auto curItem = iconList->currentItem();
+    auto icon    = style()->standardIcon(static_cast<QStyle::StandardPixmap>(curItem->text(ValueColumn).toInt()));
+    auto text    = QString("auto icon = style()->standardIcon(%1);").arg(curItem->text(ConstantColumn));
+    ViewDlg::info(this, icon, text);
+}
+
+/******************************************************************/
+
 void StandardPixmapTab::showCustomMenu()
 {
     auto menu    = new QMenu(this);
@@ -128,13 +138,8 @@ void StandardPixmapTab::showCustomMenu()
     menu->addAction(actView);
     menu->addAction(actCopy);
 
-    connect(actView, &QAction::triggered, this, [this](){
-        auto curItem = iconList->currentItem();
-        auto icon    = style()->standardIcon(static_cast<QStyle::StandardPixmap>(curItem->text(ValueColumn).toInt()));
-        auto text    = QString("auto icon = style()->standardIcon(%1)").arg(curItem->text(ConstantColumn));
-        ViewDlg::info(this, icon, text);
-    });
-
+    connect(actView, &QAction::triggered,
+            this,    &StandardPixmapTab::doView);
     connect(actCopy, &QAction::triggered,
             this,    &StandardPixmapTab::doCopy);
 

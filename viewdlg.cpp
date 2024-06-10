@@ -44,6 +44,7 @@ void ViewDlg::info(QWidget *parent, const QIcon icon, const QString &text)
 void ViewDlg::ViewDlgUi::setupUI(QWidget *parent)
 {
     parent->setWindowTitle(tr("View icon"));
+    parent->resize(600, 150);
 
     lblIcon  = new QLabel(parent);
     editText = new QTextEdit(parent);

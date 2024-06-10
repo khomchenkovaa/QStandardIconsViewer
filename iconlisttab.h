@@ -26,12 +26,15 @@ public:
 private slots:
     void doDirSelect();
     void updateView(const QString &dirName);
+    void copyOnDoubleClick();
+    void onTableCustomMenuRequested(const QPoint &pos);
 
 private:
     void setupActions();
 
 private:
     IconListTabUi ui;
+    QString savedPath;
 };
 
 #endif // ICONLISTTAB_H

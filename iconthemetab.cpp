@@ -1,4 +1,8 @@
 #include "iconthemetab.h"
+#include "qapplication.h"
+#include "qclipboard.h"
+#include "qmenu.h"
+#include "infodlgmbox.h"
 
 #include <QVBoxLayout>
 #include <QHBoxLayout>
@@ -58,18 +62,57 @@ void IconThemeTab::updateView(const QString &ctxName)
     ui.iconList->addTopLevelItems(loadFromHtml(ctxName));
 }
 
+void IconThemeTab::copyOnDoubleClick()
+{
+    auto curItem = iconList->currentItem();
+    QClipboard *clipboard = QGuiApplication::clipboard();
+    clipboard->setText(QString("style()->standardIcon(%1)").arg(curItem->text(0)));
+    qDebug() << "Копировать" << curItem->text(0);
+
+}
+
+void IconThemeTab::onTableCustomMenuRequested(const QPoint &pos)
+{
+    QMenu * menu = new QMenu(this);
+    QAction * showToCopy = new QAction("Показать", this);
+    QAction * copyOnClick = new QAction("Копировать", this);
+    menu->addAction(showToCopy);
+    menu->addAction(copyOnClick);
+
+    connect(showToCopy, &QAction::triggered, this, [this](){
+        auto curItem = iconList->currentItem();
+        //QIcon icon = style()->standardIcon(static_cast<QStyle::StandardPixmap>(curItem->text(ValueColumn).toInt()));
+        QString text = QString("style()->standardIcon(%1)").arg(curItem->text(0));
+        InfoDlgMbox::info(this, text);
+        qDebug() << "Показать" << text;
+    });
+
+    connect(copyOnClick, &QAction::triggered, this, [this](){
+        auto curItem = iconList->currentItem();
+        QClipboard *clipboard = QGuiApplication::clipboard();
+        clipboard->setText(QString("style()->standardIcon(%1)").arg(curItem->text(0)));
+        qDebug() << "Копировать" << curItem->text(0);
+    });
+
+    menu->exec(QCursor::pos());
+}
+
 /******************************************************************/
 
 void IconThemeTab::setupActions()
 {
-    connect(ui.ctxName, &QComboBox::currentTextChanged,
-            this,       &IconThemeTab::updateView);
-    connect(ui.ctxName, QOverload<int>::of(&QComboBox::currentIndexChanged),
-            this,       &IconThemeTab::updateButtons);
+    connect(ui.ctxName,     &QComboBox::currentTextChanged,
+            this,           &IconThemeTab::updateView);
+    connect(ui.ctxName,     QOverload<int>::of(&QComboBox::currentIndexChanged),
+            this,           &IconThemeTab::updateButtons);
     connect(ui.btnPrevious, &QPushButton::clicked,
             this,           &IconThemeTab::doPrevious);
-    connect(ui.btnNext, &QPushButton::clicked,
-            this,       &IconThemeTab::doNext);
+    connect(ui.btnNext,     &QPushButton::clicked,
+            this,           &IconThemeTab::doNext);
+    connect(ui.iconList,    &QWidget::customContextMenuRequested, 
+            this,           &IconThemeTab::onTableCustomMenuRequested);
+    connect(iconList,       &QTreeWidget::itemDoubleClicked,
+            this,           &IconThemeTab::copyOnDoubleClick);
 }
 
 /******************************************************************/
@@ -157,6 +200,7 @@ void IconThemeTab::IconThemeTabUi::setupUI(QWidget *parent)
     iconList->headerItem()->setText(0, "Name");
     iconList->headerItem()->setText(1, "Description");
     iconList->setAlternatingRowColors(true);
+    iconList->setContextMenuPolicy(Qt::CustomContextMenu);
 
     QHBoxLayout *horizontalLayout = new QHBoxLayout();
     horizontalLayout->setSpacing(2);

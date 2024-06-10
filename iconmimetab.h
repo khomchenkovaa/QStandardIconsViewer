@@ -1,6 +1,7 @@
 #ifndef ICONMIMETAB_H
 #define ICONMIMETAB_H
 
+#include "qtreewidget.h"
 #include <QWidget>
 
 QT_BEGIN_NAMESPACE
@@ -16,6 +17,14 @@ public:
 private:
     void setupUI();
     QList<QTreeWidgetItem*> loadFromMimeDb();
+private slots:
+    void copyOnDoubleClick();
+
+    void onTableCustomMenuRequestedMime(const QPoint &pos);
+
+private:
+    //QTreeWidget *IconListMime;
+    QTreeWidget *iconList;
 };
 
 #endif // ICONMIMETAB_H

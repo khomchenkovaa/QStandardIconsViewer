@@ -33,6 +33,9 @@ private slots:
     void updateButtons();
     void updateView();
 
+    void copyOnDoubleClick();
+    void onTableCustomMenuRequested(const QPoint &pos);
+
 private:
     void setupActions();
 

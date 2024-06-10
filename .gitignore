@@ -8,6 +8,8 @@
 *.so
 *.dll
 *.dylib
+*.vscode
+*build
 
 # Qt-es
 object_script.*.Release
@@ -41,3 +43,4 @@ target_wrapper.*
 
 # QtCreator CMake
 CMakeLists.txt.user*
+*.idx

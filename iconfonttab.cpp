@@ -1,6 +1,8 @@
 #include "iconfonttab.h"
-
+#include "infodlgmbox.h"
+#include "qclipboard.h"
 #include "qfonticon.h"
+#include "qmenu.h"
 
 #include <QLabel>
 #include <QLineEdit>
@@ -68,6 +70,40 @@ void IconFontTab::updateView()
     }
 }
 
+void IconFontTab::copyOnDoubleClick()
+{
+    auto curItem = iconList->currentItem();
+    QClipboard *clipboard = QGuiApplication::clipboard();
+    clipboard->setText(QString("%1").arg(curItem->text()));
+    qDebug() << "Копировать" << curItem->text();
+}
+
+void IconFontTab::onTableCustomMenuRequested(const QPoint &pos)
+{
+    QMenu * menu = new QMenu(this);
+    QAction * showToCopy = new QAction("Показать", this);
+    QAction * copyOnClick = new QAction("Копировать", this);
+    menu->addAction(showToCopy);
+    menu->addAction(copyOnClick);
+
+    connect(showToCopy, &QAction::triggered, this, [this](){
+        auto curItem = iconList->currentItem();
+        QIcon icon = style()->standardIcon(static_cast<QStyle::StandardPixmap>(curItem->text().toInt()));
+        QString text = QString("%1").arg(curItem->text());
+        InfoDlgMbox::info(this, icon, text);
+        qDebug() << "Показать" << text;
+    });
+
+    connect(copyOnClick, &QAction::triggered, this, [this](){
+        auto curItem = iconList->currentItem();
+        QClipboard *clipboard = QGuiApplication::clipboard();
+        clipboard->setText(QString("%1").arg(curItem->text()));
+        qDebug() << "Копировать" << curItem->text();
+    });
+
+    menu->exec(QCursor::pos());
+}
+
 /******************************************************************/
 
 void IconFontTab::setupActions()
@@ -84,6 +120,10 @@ void IconFontTab::setupActions()
             this,           &IconFontTab::doPrevious);
     connect(ui.btnNext,     &QPushButton::clicked,
             this,           &IconFontTab::doNext);
+    connect(iconList,       &QWidget::customContextMenuRequested, 
+            this,           &IconFontTab::onTableCustomMenuRequested);
+    connect(iconList,       &QListWidget::itemDoubleClicked,
+            this,           &IconFontTab::copyOnDoubleClick);
 }
 
 /******************************************************************/
@@ -109,6 +149,7 @@ void IconFontTab::IconFontTabUi::setupUI(QWidget *parent)
 
     iconList->setSpacing(6);
     iconList->setWrapping(true);
+    iconList->setContextMenuPolicy(Qt::CustomContextMenu);
 
     QHBoxLayout *horizontalLayout = new QHBoxLayout();
     horizontalLayout->setSpacing(2);

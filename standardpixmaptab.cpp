@@ -27,13 +27,6 @@ StandardPixmapTab::StandardPixmapTab(QWidget *parent)
 
 /******************************************************************/
 
-StandardPixmapTab::~StandardPixmapTab()
-{
-
-}
-
-/******************************************************************/
-
 void StandardPixmapTab::setupUI()
 {
     iconList = new QTreeWidget(this);

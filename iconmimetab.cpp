@@ -29,13 +29,6 @@ IconMimeTab::IconMimeTab(QWidget *parent)
 
 /******************************************************************/
 
-IconMimeTab::~IconMimeTab()
-{
-
-}
-
-/******************************************************************/
-
 void IconMimeTab::setupUI()
 {
     iconList = new QTreeWidget(this);

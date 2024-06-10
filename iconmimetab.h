@@ -13,7 +13,6 @@ class IconMimeTab : public QWidget
     Q_OBJECT
 public:
     explicit IconMimeTab(QWidget *parent = nullptr);
-    ~IconMimeTab();
 
 private:
     void setupUI();

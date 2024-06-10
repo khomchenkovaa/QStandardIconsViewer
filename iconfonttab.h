@@ -13,6 +13,17 @@ QT_END_NAMESPACE
 class IconFontTab : public QWidget
 {
     Q_OBJECT
+
+    struct IconFontTabUi {
+        QLineEdit   *editFont    = Q_NULLPTR;
+        QSpinBox    *spinCode    = Q_NULLPTR;
+        QSpinBox    *spinSize    = Q_NULLPTR;
+        QPushButton *btnPrevious = Q_NULLPTR;
+        QPushButton *btnNext     = Q_NULLPTR;
+        QListWidget *iconList    = Q_NULLPTR;
+
+        void setupUI(QWidget *parent = Q_NULLPTR);
+    };
 public:
     explicit IconFontTab(QWidget *parent = nullptr);
 
@@ -26,15 +37,10 @@ private slots:
     void onTableCustomMenuRequested(const QPoint &pos);
 
 private:
-    void setupUI();
+    void setupActions();
 
 private:
-    QLineEdit     *editFont;
-    QSpinBox      *spinCode;
-    QSpinBox      *spinSize;
-    QPushButton   *btnPrevious;
-    QPushButton   *btnNext;
-    QListWidget   *iconList;
+    IconFontTabUi ui;
 };
 
 #endif // ICONFONTTAB_H

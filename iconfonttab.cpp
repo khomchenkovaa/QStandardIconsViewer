@@ -14,16 +14,11 @@
 /******************************************************************/
 
 IconFontTab::IconFontTab(QWidget *parent)
-    : QWidget(parent),
-      editFont(new QLineEdit(this)),
-      spinCode(new QSpinBox(this)),
-      spinSize(new QSpinBox(this)),
-      btnPrevious(new QPushButton(QIcon::fromTheme("go-previous"),QString(), this)),
-      btnNext(new QPushButton(QIcon::fromTheme("go-next"),QString(), this)),
-      iconList(new QListWidget(this))
+    : QWidget(parent)
 {
-    setupUI();
-    QFontIcon::addFont(editFont->text());
+    ui.setupUI(this);
+    setupActions();
+    QFontIcon::addFont(ui.editFont->text());
     updateButtons();
     updateView();
 }
@@ -32,22 +27,22 @@ IconFontTab::IconFontTab(QWidget *parent)
 
 void IconFontTab::doPrevious()
 {
-    int endCode   = spinCode->value();
-    int startCode = endCode - spinSize->value();
-    if (startCode < spinCode->minimum()) {
-        startCode = spinCode->minimum();
+    int endCode   = ui.spinCode->value();
+    int startCode = endCode - ui.spinSize->value();
+    if (startCode < ui.spinCode->minimum()) {
+        startCode = ui.spinCode->minimum();
     }
-    spinCode->setValue(startCode);
+    ui.spinCode->setValue(startCode);
 }
 
 /******************************************************************/
 
 void IconFontTab::doNext()
 {
-    int startCode = spinCode->value();
-    int endCode   = startCode + spinSize->value();
-    if (endCode < spinCode->maximum()) {
-        spinCode->setValue(endCode);
+    int startCode = ui.spinCode->value();
+    int endCode   = startCode + ui.spinSize->value();
+    if (endCode < ui.spinCode->maximum()) {
+        ui.spinCode->setValue(endCode);
     }
 }
 
@@ -55,23 +50,23 @@ void IconFontTab::doNext()
 
 void IconFontTab::updateButtons()
 {
-    int startCode = spinCode->value();
-    int endCode   = startCode + spinSize->value();
-    btnPrevious->setEnabled(startCode > spinCode->minimum());
-    btnNext->setEnabled(endCode < spinCode->maximum());
+    int startCode = ui.spinCode->value();
+    int endCode   = startCode + ui.spinSize->value();
+    ui.btnPrevious->setEnabled(startCode > ui.spinCode->minimum());
+    ui.btnNext->setEnabled(endCode < ui.spinCode->maximum());
 }
 
 /******************************************************************/
 
 void IconFontTab::updateView()
 {
-    iconList->clear();
-    int startCode = spinCode->value();
-    int endCode   = startCode + spinSize->value();
+    ui.iconList->clear();
+    int startCode = ui.spinCode->value();
+    int endCode   = startCode + ui.spinSize->value();
     for(int code = startCode; code < endCode; ++code) {
         QString text = QString("0x%1").arg(QString::number(code, 16));
         QListWidgetItem *item = new QListWidgetItem(QFontIcon::icon(code), text);
-        iconList->addItem(item);
+        ui.iconList->addItem(item);
     }
 }
 
@@ -111,8 +106,37 @@ void IconFontTab::onTableCustomMenuRequested(const QPoint &pos)
 
 /******************************************************************/
 
-void IconFontTab::setupUI()
+void IconFontTab::setupActions()
 {
+    connect(ui.spinCode, QOverload<int>::of(&QSpinBox::valueChanged), this, [this](){
+        updateView();
+        updateButtons();
+    });
+    connect(ui.spinSize, QOverload<int>::of(&QSpinBox::valueChanged), this, [this](){
+        updateView();
+        updateButtons();
+    });
+    connect(ui.btnPrevious, &QPushButton::clicked,
+            this,           &IconFontTab::doPrevious);
+    connect(ui.btnNext,     &QPushButton::clicked,
+            this,           &IconFontTab::doNext);
+    connect(iconList,       &QWidget::customContextMenuRequested, 
+            this,           &IconFontTab::onTableCustomMenuRequested);
+    connect(iconList,       &QListWidget::itemDoubleClicked,
+            this,           &IconFontTab::copyOnDoubleClick);
+}
+
+/******************************************************************/
+
+void IconFontTab::IconFontTabUi::setupUI(QWidget *parent)
+{
+    editFont    = new QLineEdit(parent);
+    spinCode    = new QSpinBox(parent);
+    spinSize    = new QSpinBox(parent);
+    btnPrevious = new QPushButton(QIcon::fromTheme("go-previous"),QString(), parent);
+    btnNext     = new QPushButton(QIcon::fromTheme("go-next"),QString(), parent);
+    iconList    = new QListWidget(parent);
+
     editFont->setText(":/ttf/fontawesome.ttf");
     editFont->setReadOnly(true);
 
@@ -125,40 +149,21 @@ void IconFontTab::setupUI()
 
     iconList->setSpacing(6);
     iconList->setWrapping(true);
+    iconList->setContextMenuPolicy(Qt::CustomContextMenu);
 
     QHBoxLayout *horizontalLayout = new QHBoxLayout();
     horizontalLayout->setSpacing(2);
     horizontalLayout->setContentsMargins(0, 0, 0, 0);
-    horizontalLayout->addWidget(new QLabel("Font:", this));
+    horizontalLayout->addWidget(new QLabel("Font:", parent));
     horizontalLayout->addWidget(editFont);
     horizontalLayout->addWidget(spinCode);
     horizontalLayout->addWidget(spinSize);
     horizontalLayout->addWidget(btnPrevious);
     horizontalLayout->addWidget(btnNext);
 
-    QVBoxLayout *mainLayout = new QVBoxLayout(this);
+    QVBoxLayout *mainLayout = new QVBoxLayout(parent);
     mainLayout->setSpacing(6);
     mainLayout->setContentsMargins(11, 11, 11, 11);
     mainLayout->addLayout(horizontalLayout);
     mainLayout->addWidget(iconList);
-
-    connect(spinCode, SIGNAL(valueChanged(int)),
-            this, SLOT(updateView()));
-    connect(spinCode, SIGNAL(valueChanged(int)),
-            this, SLOT(updateButtons()));
-    connect(spinSize, SIGNAL(valueChanged(int)),
-            this, SLOT(updateView()));
-    connect(spinSize, SIGNAL(valueChanged(int)),
-            this, SLOT(updateButtons()));
-    connect(btnPrevious, SIGNAL(clicked()),
-            this, SLOT(doPrevious()));
-    connect(btnNext, SIGNAL(clicked()),
-            this, SLOT(doNext()));
-
-    iconList->setContextMenuPolicy(Qt::CustomContextMenu);
-    connect(iconList,&QWidget::customContextMenuRequested, this, &IconFontTab::onTableCustomMenuRequested);
-
-    connect(iconList,&QListWidget::itemDoubleClicked,this,&IconFontTab::copyOnDoubleClick);
 }
-
-/******************************************************************/

@@ -13,7 +13,6 @@ class StandardPixmapTab : public QWidget
     Q_OBJECT
 public:
     explicit StandardPixmapTab(QWidget *parent = nullptr);
-    ~StandardPixmapTab();
 
 private:
     void setupUI();

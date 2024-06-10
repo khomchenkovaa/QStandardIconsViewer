@@ -31,22 +31,21 @@ SOURCES += \
         iconlisttab.cpp \
         iconmimetab.cpp \
         iconthemetab.cpp \
-        infodlgmbox.cpp \
         main.cpp \
         standardiconswidget.cpp \
-        standardpixmaptab.cpp
+        standardpixmaptab.cpp \
+        viewdlg.cpp
 
 HEADERS += \
         iconfonttab.h \
         iconlisttab.h \
         iconmimetab.h \
         iconthemetab.h \
-        infodlgmbox.h \
         standardiconswidget.h \
-        standardpixmaptab.h
+        standardpixmaptab.h \
+        viewdlg.h
 
-FORMS += \
-    infodlgmbox.ui
+FORMS +=
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

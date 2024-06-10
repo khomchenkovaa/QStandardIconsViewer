@@ -31,10 +31,9 @@ private slots:
     void doNext();
     void updateButtons(int index);
     void updateView(const QString &ctxName);
+    void doCopy();
+    void showCustomMenu();
 
-    void copyOnDoubleClick();
-
-    void onTableCustomMenuRequested(const QPoint &pos);
 private:
     void setupActions();
     QList<QTreeWidgetItem*> loadFromHtml(const QString &name);

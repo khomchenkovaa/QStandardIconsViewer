@@ -2,7 +2,7 @@
 #include "qapplication.h"
 #include "qclipboard.h"
 #include "qmenu.h"
-#include "infodlgmbox.h"
+#include "viewdlg.h"
 
 #include <QVBoxLayout>
 #include <QHBoxLayout>
@@ -12,6 +12,11 @@
 #include <QHeaderView>
 #include <QPushButton>
 #include <QtXml>
+
+enum {
+    NameColumn,
+    DescriptionColumn
+};
 
 /******************************************************************/
 
@@ -62,37 +67,34 @@ void IconThemeTab::updateView(const QString &ctxName)
     ui.iconList->addTopLevelItems(loadFromHtml(ctxName));
 }
 
-void IconThemeTab::copyOnDoubleClick()
-{
-    auto curItem = iconList->currentItem();
-    QClipboard *clipboard = QGuiApplication::clipboard();
-    clipboard->setText(QString("style()->standardIcon(%1)").arg(curItem->text(0)));
-    qDebug() << "Копировать" << curItem->text(0);
+/******************************************************************/
 
+void IconThemeTab::doCopy()
+{
+    auto curItem = ui.iconList->currentItem();
+    auto clipboard = QGuiApplication::clipboard();
+    clipboard->setText(QString("QIcon::fromTheme(\"%1\")").arg(curItem->text(NameColumn)));
 }
 
-void IconThemeTab::onTableCustomMenuRequested(const QPoint &pos)
+/******************************************************************/
+
+void IconThemeTab::showCustomMenu()
 {
-    QMenu * menu = new QMenu(this);
-    QAction * showToCopy = new QAction("Показать", this);
-    QAction * copyOnClick = new QAction("Копировать", this);
-    menu->addAction(showToCopy);
-    menu->addAction(copyOnClick);
+    auto menu    = new QMenu(this);
+    auto actView = new QAction(QIcon::fromTheme("zoom-original"), tr("View"), this);
+    auto actCopy = new QAction(QIcon::fromTheme("edit-copy"), tr("Copy"), this);
+    menu->addAction(actView);
+    menu->addAction(actCopy);
 
-    connect(showToCopy, &QAction::triggered, this, [this](){
-        auto curItem = iconList->currentItem();
-        //QIcon icon = style()->standardIcon(static_cast<QStyle::StandardPixmap>(curItem->text(ValueColumn).toInt()));
-        QString text = QString("style()->standardIcon(%1)").arg(curItem->text(0));
-        InfoDlgMbox::info(this, text);
-        qDebug() << "Показать" << text;
+    connect(actView, &QAction::triggered, this, [this](){
+        auto item = ui.iconList->currentItem();
+        auto icon = QIcon::fromTheme(item->text(NameColumn));
+        auto text = QString("auto icon = QIcon::fromTheme(\"%1\")").arg(item->text(NameColumn));
+        ViewDlg::info(this, icon, text);
     });
 
-    connect(copyOnClick, &QAction::triggered, this, [this](){
-        auto curItem = iconList->currentItem();
-        QClipboard *clipboard = QGuiApplication::clipboard();
-        clipboard->setText(QString("style()->standardIcon(%1)").arg(curItem->text(0)));
-        qDebug() << "Копировать" << curItem->text(0);
-    });
+    connect(actCopy, &QAction::triggered,
+            this,    &IconThemeTab::doCopy);
 
     menu->exec(QCursor::pos());
 }
@@ -110,9 +112,9 @@ void IconThemeTab::setupActions()
     connect(ui.btnNext,     &QPushButton::clicked,
             this,           &IconThemeTab::doNext);
     connect(ui.iconList,    &QWidget::customContextMenuRequested, 
-            this,           &IconThemeTab::onTableCustomMenuRequested);
-    connect(iconList,       &QTreeWidget::itemDoubleClicked,
-            this,           &IconThemeTab::copyOnDoubleClick);
+            this,           &IconThemeTab::showCustomMenu);
+    connect(ui.iconList,    &QTreeWidget::itemDoubleClicked,
+            this,           &IconThemeTab::doCopy);
 }
 
 /******************************************************************/
@@ -162,10 +164,10 @@ QList<QTreeWidgetItem *> IconThemeTab::loadFromHtml(const QString &name)
     for (; !trElem.isNull(); trElem = trElem.nextSiblingElement("tr")) {
         QDomElement nameElem = trElem.firstChildElement("td");
         QDomElement descrElem = trElem.lastChildElement("td");
-        QTreeWidgetItem *item = new QTreeWidgetItem();
-        item->setText(0, nameElem.text().trimmed());
-        item->setText(1, descrElem.text().trimmed().replace("\n"," "));
-        item->setIcon(0, QIcon::fromTheme(nameElem.text().trimmed()));
+        auto item = new QTreeWidgetItem();
+        item->setText(NameColumn, nameElem.text().trimmed());
+        item->setIcon(NameColumn, QIcon::fromTheme(nameElem.text().trimmed()));
+        item->setText(DescriptionColumn, descrElem.text().trimmed().replace("\n"," "));
         result.append(item);
     }
     return result;
@@ -197,8 +199,8 @@ void IconThemeTab::IconThemeTabUi::setupUI(QWidget *parent)
 
     iconList->setColumnCount(2);
     iconList->header()->setDefaultSectionSize(200);
-    iconList->headerItem()->setText(0, "Name");
-    iconList->headerItem()->setText(1, "Description");
+    iconList->headerItem()->setText(NameColumn, "Name");
+    iconList->headerItem()->setText(DescriptionColumn, "Description");
     iconList->setAlternatingRowColors(true);
     iconList->setContextMenuPolicy(Qt::CustomContextMenu);
 

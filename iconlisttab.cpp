@@ -3,7 +3,7 @@
 #include "qclipboard.h"
 #include "qdebug.h"
 #include "qmenu.h"
-#include "infodlgmbox.h"
+#include "viewdlg.h"
 #include "qmimedata.h"
 
 #include <QVBoxLayout>
@@ -28,10 +28,9 @@ IconListTab::IconListTab(QWidget *parent)
 
 void IconListTab::doDirSelect()
 {
-    QString dirName = QFileDialog::getExistingDirectory(this, tr("Select Folder with icons"), ui.editName->text());
+    auto dirName = QFileDialog::getExistingDirectory(this, tr("Select Folder with icons"), ui.editDir->text());
     if (!dirName.isEmpty()) {
-        savedPath=dirName;
-        ui.editName->setText(dirName);
+        ui.editDir->setText(dirName);
     }
 }
 
@@ -45,7 +44,7 @@ void IconListTab::updateView(const QString &dirName)
         it.next();
         QPixmap pixmap(it.filePath());
         if (!pixmap.isNull()) {
-            QListWidgetItem *item = new QListWidgetItem(QIcon(pixmap), it.fileName());
+            auto item = new QListWidgetItem(QIcon(pixmap), it.fileName());
             ui.iconList->addItem(item);
         }
     }
@@ -57,23 +56,23 @@ void IconListTab::setupActions()
 {
     connect(ui.btnDir,   &QPushButton::clicked,
             this,        &IconListTab::doDirSelect);
-    connect(ui.editName, &QLineEdit::textChanged,
+    connect(ui.editDir, &QLineEdit::textChanged,
             this,        &IconListTab::updateView);
     connect(ui.iconList, &QWidget::customContextMenuRequested, 
-            this,        &IconListTab::onTableCustomMenuRequested);
+            this,        &IconListTab::showCustomMenu);
     connect(ui.iconList, &QListWidget::itemDoubleClicked,
-            this,        &IconListTab::copyOnDoubleClick);
+            this,        &IconListTab::doCopy);
 }
 
 /******************************************************************/
 
 void IconListTab::IconListTabUi::setupUI(QWidget *parent)
 {
-    editName = new QLineEdit(parent);
+    editDir  = new QLineEdit(parent);
     iconList = new QListWidget(parent);
     btnDir   = new QPushButton("...",parent);
 
-    editName->setReadOnly(true);
+    editDir->setReadOnly(true);
     iconList->setWrapping(true);
     iconList->setAlternatingRowColors(true);
     iconList->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -83,7 +82,7 @@ void IconListTab::IconListTabUi::setupUI(QWidget *parent)
     horizontalLayout->setSpacing(2);
     horizontalLayout->setContentsMargins(0, 0, 0, 0);
     horizontalLayout->addWidget(new QLabel("Folder:", parent));
-    horizontalLayout->addWidget(editName);
+    horizontalLayout->addWidget(editDir);
     horizontalLayout->addWidget(btnDir);
 
     QVBoxLayout *mainLayout = new QVBoxLayout(parent);
@@ -95,37 +94,38 @@ void IconListTab::IconListTabUi::setupUI(QWidget *parent)
 
 /******************************************************************/
 
-void IconListTab::copyOnDoubleClick()
+void IconListTab::doCopy()
 {
-    auto curItem = iconList->currentItem()->text();
-
-    QString dirNameToCopy = QFileDialog::getExistingDirectory(this, tr("Select Folder to save"));
-    if(QFile::copy(savedPath+QDir::separator()+curItem,dirNameToCopy+QDir::separator()+QDir::separator()+curItem)){
-        qDebug() << "Ok";
-        qDebug() << "Скопировано из " <<savedPath+QDir::separator()+curItem;
-        qDebug() << "Скопировано в " <<dirNameToCopy;
-    } else qDebug()<<"Not ok";
-
+    auto fileName  = ui.iconList->currentItem()->text();
+    auto sourceDir = ui.editDir->text();
+    auto targetDir = QFileDialog::getExistingDirectory(this, tr("Select Folder to save"));
+    if (targetDir.isEmpty()) return;
+    QFile::copy(sourceDir + QDir::separator() + fileName, targetDir + QDir::separator() + fileName);
 }
 
 /******************************************************************/
 
-void IconListTab::onTableCustomMenuRequested(const QPoint &pos)
+void IconListTab::showCustomMenu()
 {
-    QMenu * menu = new QMenu(this);
-    QAction * showToCopy = new QAction("Показать", this);
-    menu->addAction(showToCopy);
+    auto menu    = new QMenu(this);
+    auto actView = new QAction(QIcon::fromTheme("zoom-original"), tr("View"), this);
+    auto actCopy = new QAction(QIcon::fromTheme("edit-copy"), tr("Copy"), this);
+    menu->addAction(actView);
+    menu->addAction(actCopy);
 
-    connect(showToCopy, &QAction::triggered, this, [this](){
-        auto curItem = iconList->currentItem()->text();
-
-        QString dirNameToCopy = QFileDialog::getExistingDirectory(this, tr("Select Folder to save"));
-        if(QFile::copy(savedPath+QDir::separator()+curItem,dirNameToCopy+QDir::separator()+QDir::separator()+curItem)){
-            qDebug() << "Ok";
-            qDebug() << "Скопировано из " <<savedPath+QDir::separator()+curItem;
-            qDebug() << "Скопировано в " <<dirNameToCopy;
-        }else qDebug()<<"Not ok";
+    connect(actView, &QAction::triggered, this, [this](){
+        auto fileName  = ui.iconList->currentItem()->text();
+        auto sourceDir = ui.editDir->text();
+        auto filePath  = sourceDir + QDir::separator() + fileName;
+        QPixmap pixmap(filePath);
+        auto icon = QIcon(pixmap);
+        auto text = QString("QPixmap pixmap(\"%1\");\nauto icon = QIcon(pixmap);")
+                .arg(filePath);
+        ViewDlg::info(this, icon, text);
     });
+
+    connect(actCopy, &QAction::triggered,
+            this,    &IconListTab::doCopy);
 
     menu->exec(QCursor::pos());
 }

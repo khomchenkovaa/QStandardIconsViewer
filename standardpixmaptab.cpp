@@ -1,5 +1,5 @@
 #include "standardpixmaptab.h"
-#include "infodlgmbox.h"
+#include "viewdlg.h"
 #include "qapplication.h"
 #include <QClipboard>
 #include <QVBoxLayout>
@@ -40,20 +40,19 @@ void StandardPixmapTab::setupUI()
     iconList->headerItem()->setTextAlignment(2, Qt::AlignCenter);
     iconList->setColumnWidth(3, 50);
     iconList->setAlternatingRowColors(true);
+    iconList->addTopLevelItems(loadStandardPixmaps());
+    iconList->setContextMenuPolicy(Qt::CustomContextMenu);
 
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
     mainLayout->setSpacing(6);
     mainLayout->setContentsMargins(11, 11, 11, 11);
     mainLayout->addWidget(iconList);
 
-    iconList->addTopLevelItems(loadStandardPixmaps());
-
-    iconList->setContextMenuPolicy(Qt::CustomContextMenu);
-    connect(iconList,&QWidget::customContextMenuRequested, this, &StandardPixmapTab::onTableCustomMenuRequested);
-
-    connect(iconList,&QTreeWidget::itemDoubleClicked,this,&StandardPixmapTab::copyOnDoubleClick);
+    connect(iconList, &QWidget::customContextMenuRequested,
+            this,     &StandardPixmapTab::showCustomMenu);
+    connect(iconList, &QTreeWidget::itemDoubleClicked,
+            this,     &StandardPixmapTab::doCopy);
 }
-
 
 /******************************************************************/
 
@@ -110,44 +109,36 @@ QList<QTreeWidgetItem *> StandardPixmapTab::loadStandardPixmaps()
     return result;
 }
 
+/******************************************************************/
 
-void StandardPixmapTab::copyOnDoubleClick()
+void StandardPixmapTab::doCopy()
 {
-
     auto curItem = iconList->currentItem();
-    QClipboard *clipboard = QGuiApplication::clipboard();
+    auto clipboard = QGuiApplication::clipboard();
     clipboard->setText(QString("style()->standardIcon(%1)").arg(curItem->text(ConstantColumn)));
-    qDebug() << "Копировать" << curItem->text(ConstantColumn);
 }
 
-//works!!!
+/******************************************************************/
 
-
-void StandardPixmapTab::onTableCustomMenuRequested(const QPoint &pos)
+void StandardPixmapTab::showCustomMenu()
 {
-    QMenu * menu = new QMenu(this);
-    QAction * showToCopy = new QAction("Показать", this);
-    QAction * copyOnClick = new QAction("Копировать", this);
-    menu->addAction(showToCopy);
-    menu->addAction(copyOnClick);
+    auto menu    = new QMenu(this);
+    auto actView = new QAction(QIcon::fromTheme("zoom-original"), tr("View"), this);
+    auto actCopy = new QAction(QIcon::fromTheme("edit-copy"), tr("Copy"), this);
+    menu->addAction(actView);
+    menu->addAction(actCopy);
 
-    connect(showToCopy, &QAction::triggered, this, [this](){
+    connect(actView, &QAction::triggered, this, [this](){
         auto curItem = iconList->currentItem();
-        QIcon icon = style()->standardIcon(static_cast<QStyle::StandardPixmap>(curItem->text(ValueColumn).toInt()));
-        QString text = QString("style()->standardIcon(%1)").arg(curItem->text(ConstantColumn));
-        InfoDlgMbox::info(this, icon, text);
-        qDebug() << "Показать" << text;
+        auto icon    = style()->standardIcon(static_cast<QStyle::StandardPixmap>(curItem->text(ValueColumn).toInt()));
+        auto text    = QString("auto icon = style()->standardIcon(%1)").arg(curItem->text(ConstantColumn));
+        ViewDlg::info(this, icon, text);
     });
 
-    connect(copyOnClick, &QAction::triggered, this, [this](){
-        auto curItem = iconList->currentItem();
-        QClipboard *clipboard = QGuiApplication::clipboard();
-        clipboard->setText(QString("style()->standardIcon(%1)").arg(curItem->text(ConstantColumn)));
-        qDebug() << "Копировать" << curItem->text(ConstantColumn);
-    });
+    connect(actCopy, &QAction::triggered,
+            this,    &StandardPixmapTab::doCopy);
 
     menu->exec(QCursor::pos());
 }
-//works
 
 /******************************************************************/

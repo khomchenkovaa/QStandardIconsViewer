@@ -1,7 +1,7 @@
 #include "iconmimetab.h"
 #include "qclipboard.h"
 #include "qdebug.h"
-#include "infodlgmbox.h"
+#include "viewdlg.h"
 
 #include <QVBoxLayout>
 #include <QLabel>
@@ -12,15 +12,16 @@
 #include <QMenu>
 #include <QPoint>
 #include <QGuiApplication>
-/******************************************************************/
 
 enum {
     NameColumn,
     CommentColumn,
     FilterColumn,
     ParentColumn
-
 };
+
+/******************************************************************/
+
 IconMimeTab::IconMimeTab(QWidget *parent)
     : QWidget(parent)
 {
@@ -35,25 +36,26 @@ void IconMimeTab::setupUI()
     iconList->setColumnCount(4);
     iconList->header()->setDefaultSectionSize(200);
     iconList->headerItem()->setText(NameColumn, "Name");
-    iconList->headerItem()->setTextAlignment(0, Qt::AlignCenter);
+    iconList->headerItem()->setTextAlignment(NameColumn, Qt::AlignCenter);
     iconList->headerItem()->setText(CommentColumn, "Comment");
-    iconList->headerItem()->setTextAlignment(1, Qt::AlignCenter);
+    iconList->headerItem()->setTextAlignment(CommentColumn, Qt::AlignCenter);
     iconList->headerItem()->setText(FilterColumn, "Filter");
-    iconList->headerItem()->setTextAlignment(2, Qt::AlignCenter);
+    iconList->headerItem()->setTextAlignment(FilterColumn, Qt::AlignCenter);
     iconList->headerItem()->setText(ParentColumn, "Parent");
-    iconList->headerItem()->setTextAlignment(3, Qt::AlignCenter);
+    iconList->headerItem()->setTextAlignment(ParentColumn, Qt::AlignCenter);
     iconList->setAlternatingRowColors(true);
+    iconList->addTopLevelItems(loadFromMimeDb());
+    iconList->setContextMenuPolicy(Qt::CustomContextMenu);
 
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
     mainLayout->setSpacing(6);
     mainLayout->setContentsMargins(11, 11, 11, 11);
     mainLayout->addWidget(iconList);
 
-    iconList->addTopLevelItems(loadFromMimeDb());
-
-    iconList->setContextMenuPolicy(Qt::CustomContextMenu);
-    connect(iconList,&QWidget::customContextMenuRequested, this, &IconMimeTab::onTableCustomMenuRequestedMime);
-    connect(iconList,&QTreeWidget::itemDoubleClicked,this,&IconMimeTab::copyOnDoubleClick);
+    connect(iconList, &QWidget::customContextMenuRequested,
+            this,     &IconMimeTab::showCustomMenu);
+    connect(iconList, &QTreeWidget::itemDoubleClicked,
+            this,     &IconMimeTab::doCopy);
 }
 
 /******************************************************************/
@@ -69,10 +71,10 @@ QList<QTreeWidgetItem *> IconMimeTab::loadFromMimeDb()
 
     for (auto mime : allTypes) {
         QTreeWidgetItem *item = new QTreeWidgetItem();
-        item->setText(0, mime.name());
-        item->setText(1, mime.comment());
-        item->setText(2, mime.filterString());
-        item->setText(3, mime.parentMimeTypes().join(", "));
+        item->setText(NameColumn, mime.name());
+        item->setText(CommentColumn, mime.comment());
+        item->setText(FilterColumn, mime.filterString());
+        item->setText(ParentColumn, mime.parentMimeTypes().join(", "));
         QString iconName = mime.iconName();
         if (iconName.isEmpty()) iconName = mime.genericIconName();
         if (!iconName.isEmpty()) {
@@ -83,39 +85,36 @@ QList<QTreeWidgetItem *> IconMimeTab::loadFromMimeDb()
     return result;
 }
 
-void IconMimeTab::copyOnDoubleClick()
-{
-        auto curItem = iconList->currentItem();
-        QClipboard *clipboard = QGuiApplication::clipboard();
-        clipboard->setText(QString("%1").arg(curItem->text(NameColumn)));
-        qDebug() << "Копировать" << curItem->text(NameColumn);
+/******************************************************************/
 
+void IconMimeTab::doCopy()
+{
+    auto curItem   = iconList->currentItem();
+    auto clipboard = QGuiApplication::clipboard();
+    clipboard->setText(QString("QIcon::fromTheme(\"%1\")").arg(curItem->text(NameColumn)));
 }
 
-void IconMimeTab::onTableCustomMenuRequestedMime(const QPoint &pos)
+/******************************************************************/
+
+void IconMimeTab::showCustomMenu()
 {
-    QMenu * menu = new QMenu(this);
-    QAction * showToCopy = new QAction("Показать", this);
-    QAction * copyOnClick = new QAction("Копировать", this);
-    menu->addAction(showToCopy);
-    menu->addAction(copyOnClick);
+    auto menu    = new QMenu(this);
+    auto actView = new QAction(QIcon::fromTheme("zoom-original"), tr("View"), this);
+    auto actCopy = new QAction(QIcon::fromTheme("edit-copy"), tr("Copy"), this);
+    menu->addAction(actView);
+    menu->addAction(actCopy);
 
-    connect(showToCopy, &QAction::triggered, this, [this](){
-        auto curItem = iconList->currentItem();
-        QIcon icon = style()->standardIcon(static_cast<QStyle::StandardPixmap>(curItem->text(NameColumn).toInt()));
-        QString text = QString("%1").arg(curItem->text(NameColumn));
-        InfoDlgMbox::info(this, icon, text);
-        qDebug() << "Показать" << text;
+    connect(actView, &QAction::triggered, this, [this](){
+        auto item = iconList->currentItem();
+        auto icon = QIcon::fromTheme(item->text(NameColumn));
+        auto text = QString("auto icon = QIcon::fromTheme(\"%1\")").arg(item->text(NameColumn));
+        ViewDlg::info(this, icon, text);
     });
 
-    connect(copyOnClick, &QAction::triggered, this, [this](){
-        auto curItem = iconList->currentItem();
-        QClipboard *clipboard = QGuiApplication::clipboard();
-        clipboard->setText(QString("%1").arg(curItem->text(NameColumn)));
-        qDebug() << "Копировать" << curItem->text(NameColumn);
-    });
+    connect(actCopy, &QAction::triggered,
+            this,    &IconMimeTab::doCopy);
 
     menu->exec(QCursor::pos());
 }
-//not works
+
 /******************************************************************/

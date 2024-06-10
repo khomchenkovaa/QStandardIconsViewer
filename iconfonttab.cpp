@@ -1,5 +1,5 @@
 #include "iconfonttab.h"
-#include "infodlgmbox.h"
+#include "viewdlg.h"
 #include "qclipboard.h"
 #include "qfonticon.h"
 #include "qmenu.h"
@@ -64,42 +64,40 @@ void IconFontTab::updateView()
     int startCode = ui.spinCode->value();
     int endCode   = startCode + ui.spinSize->value();
     for(int code = startCode; code < endCode; ++code) {
-        QString text = QString("0x%1").arg(QString::number(code, 16));
-        QListWidgetItem *item = new QListWidgetItem(QFontIcon::icon(code), text);
+        auto text = QString("0x%1").arg(QString::number(code, 16));
+        auto item = new QListWidgetItem(QFontIcon::icon(code), text);
         ui.iconList->addItem(item);
     }
 }
 
-void IconFontTab::copyOnDoubleClick()
+/******************************************************************/
+
+void IconFontTab::doCopy()
 {
-    auto curItem = iconList->currentItem();
-    QClipboard *clipboard = QGuiApplication::clipboard();
-    clipboard->setText(QString("%1").arg(curItem->text()));
-    qDebug() << "Копировать" << curItem->text();
+    auto charCode  = ui.iconList->currentItem()->text();
+    auto clipboard = QGuiApplication::clipboard();
+    clipboard->setText(QString("QFontIcon::icon(%1)").arg(charCode));
 }
 
-void IconFontTab::onTableCustomMenuRequested(const QPoint &pos)
+/******************************************************************/
+
+void IconFontTab::showCustomMenu()
 {
-    QMenu * menu = new QMenu(this);
-    QAction * showToCopy = new QAction("Показать", this);
-    QAction * copyOnClick = new QAction("Копировать", this);
-    menu->addAction(showToCopy);
-    menu->addAction(copyOnClick);
+    auto menu    = new QMenu(this);
+    auto actView = new QAction(QIcon::fromTheme("zoom-original"), tr("View"), this);
+    auto actCopy = new QAction(QIcon::fromTheme("edit-copy"), tr("Copy"), this);
+    menu->addAction(actView);
+    menu->addAction(actCopy);
 
-    connect(showToCopy, &QAction::triggered, this, [this](){
-        auto curItem = iconList->currentItem();
-        QIcon icon = style()->standardIcon(static_cast<QStyle::StandardPixmap>(curItem->text().toInt()));
-        QString text = QString("%1").arg(curItem->text());
-        InfoDlgMbox::info(this, icon, text);
-        qDebug() << "Показать" << text;
+    connect(actView, &QAction::triggered, this, [this](){
+        auto charCode = ui.iconList->currentItem()->text();
+        auto icon     = QFontIcon::icon(charCode.toInt());
+        auto text     = QString("auto icon = QFontIcon::icon(%1)").arg(charCode);
+        ViewDlg::info(this, icon, text);
     });
 
-    connect(copyOnClick, &QAction::triggered, this, [this](){
-        auto curItem = iconList->currentItem();
-        QClipboard *clipboard = QGuiApplication::clipboard();
-        clipboard->setText(QString("%1").arg(curItem->text()));
-        qDebug() << "Копировать" << curItem->text();
-    });
+    connect(actCopy, &QAction::triggered,
+            this,    &IconFontTab::doCopy);
 
     menu->exec(QCursor::pos());
 }
@@ -120,10 +118,10 @@ void IconFontTab::setupActions()
             this,           &IconFontTab::doPrevious);
     connect(ui.btnNext,     &QPushButton::clicked,
             this,           &IconFontTab::doNext);
-    connect(iconList,       &QWidget::customContextMenuRequested, 
-            this,           &IconFontTab::onTableCustomMenuRequested);
-    connect(iconList,       &QListWidget::itemDoubleClicked,
-            this,           &IconFontTab::copyOnDoubleClick);
+    connect(ui.iconList,    &QWidget::customContextMenuRequested,
+            this,           &IconFontTab::showCustomMenu);
+    connect(ui.iconList,    &QListWidget::itemDoubleClicked,
+            this,           &IconFontTab::doCopy);
 }
 
 /******************************************************************/
@@ -167,3 +165,5 @@ void IconFontTab::IconFontTabUi::setupUI(QWidget *parent)
     mainLayout->addLayout(horizontalLayout);
     mainLayout->addWidget(iconList);
 }
+
+/******************************************************************/

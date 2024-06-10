@@ -14,7 +14,7 @@ class IconListTab : public QWidget
     Q_OBJECT
 
     struct IconListTabUi {
-        QLineEdit   *editName = Q_NULLPTR;
+        QLineEdit   *editDir  = Q_NULLPTR;
         QListWidget *iconList = Q_NULLPTR;
         QPushButton *btnDir   = Q_NULLPTR;
 
@@ -26,15 +26,14 @@ public:
 private slots:
     void doDirSelect();
     void updateView(const QString &dirName);
-    void copyOnDoubleClick();
-    void onTableCustomMenuRequested(const QPoint &pos);
+    void doCopy();
+    void showCustomMenu();
 
 private:
     void setupActions();
 
 private:
     IconListTabUi ui;
-    QString savedPath;
 };
 
 #endif // ICONLISTTAB_H

@@ -17,10 +17,10 @@ public:
 private:
     void setupUI();
     QList<QTreeWidgetItem*> loadFromMimeDb();
-private slots:
-    void copyOnDoubleClick();
 
-    void onTableCustomMenuRequestedMime(const QPoint &pos);
+private slots:
+    void doCopy();
+    void showCustomMenu();
 
 private:
     //QTreeWidget *IconListMime;

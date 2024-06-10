@@ -17,14 +17,13 @@ public:
 private:
     void setupUI();
     QList<QTreeWidgetItem*> loadStandardPixmaps();
-private slots:
-    void copyOnDoubleClick();
 
-    void onTableCustomMenuRequested(const QPoint &pos);
+private slots:
+    void doCopy();
+    void showCustomMenu();
+
 private:
     QTreeWidget *iconList;
-
-
 };
 
 #endif // STANDARDPIXMAPTAB_H

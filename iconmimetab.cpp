@@ -13,6 +13,23 @@
 #include <QPoint>
 #include <QGuiApplication>
 
+namespace Utils {
+
+inline QIcon iconForMimeType(const QString &mime, const QIcon &fallback = QIcon())
+{
+    QMimeDatabase db;
+    QMimeType t = db.mimeTypeForName(mime);
+    if (QIcon::hasThemeIcon(t.iconName())) {
+        return QIcon::fromTheme(t.iconName());
+    }
+    if (QIcon::hasThemeIcon(t.genericIconName())) {
+        return QIcon::fromTheme(t.genericIconName());
+    }
+    return fallback;
+}
+
+}
+
 enum {
     NameColumn,
     CommentColumn,
@@ -69,16 +86,15 @@ QList<QTreeWidgetItem *> IconMimeTab::loadFromMimeDb()
     std::sort(allTypes.begin(), allTypes.end(),
           [](QMimeType a, QMimeType b) -> bool { return a.name() < b.name(); });
 
-    for (auto mime : allTypes) {
-        QTreeWidgetItem *item = new QTreeWidgetItem();
+    for (const auto &mime : qAsConst(allTypes)) {
+        auto item = new QTreeWidgetItem();
         item->setText(NameColumn, mime.name());
         item->setText(CommentColumn, mime.comment());
         item->setText(FilterColumn, mime.filterString());
         item->setText(ParentColumn, mime.parentMimeTypes().join(", "));
-        QString iconName = mime.iconName();
-        if (iconName.isEmpty()) iconName = mime.genericIconName();
-        if (!iconName.isEmpty()) {
-            item->setIcon(0, QIcon::fromTheme(iconName));
+        item->setIcon(NameColumn, Utils::iconForMimeType(mime.name()));
+        if (!mime.parentMimeTypes().isEmpty()) {
+            item->setIcon(ParentColumn, Utils::iconForMimeType(mime.parentMimeTypes().constFirst()));
         }
         result.append(item);
     }
@@ -91,7 +107,7 @@ void IconMimeTab::doCopy()
 {
     auto curItem   = iconList->currentItem();
     auto clipboard = QGuiApplication::clipboard();
-    clipboard->setText(QString("QIcon::fromTheme(\"%1\")").arg(curItem->text(NameColumn)));
+    clipboard->setText(QString("Utils::iconForMimeType(\"%1\")").arg(curItem->text(NameColumn)));
 }
 
 /******************************************************************/
@@ -99,8 +115,8 @@ void IconMimeTab::doCopy()
 void IconMimeTab::doView()
 {
     auto item = iconList->currentItem();
-    auto icon = QIcon::fromTheme(item->text(NameColumn));
-    auto text = QString("auto icon = QIcon::fromTheme(\"%1\");").arg(item->text(NameColumn));
+    auto icon = Utils::iconForMimeType(item->text(NameColumn));
+    auto text = QString("auto icon = Utils::iconForMimeType(\"%1\");").arg(item->text(NameColumn));
     ViewDlg::info(this, icon, text);
 }
 

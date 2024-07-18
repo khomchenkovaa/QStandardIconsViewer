@@ -1,6 +1,7 @@
 #include "standardpixmaptab.h"
 #include "viewdlg.h"
-#include "qapplication.h"
+
+#include <QApplication>
 #include <QClipboard>
 #include <QVBoxLayout>
 #include <QTreeWidget>
@@ -32,18 +33,18 @@ void StandardPixmapTab::setupUI()
     iconList = new QTreeWidget(this);
     iconList->setColumnCount(3);
     iconList->header()->setDefaultSectionSize(250);
-    iconList->headerItem()->setText(0, tr("Constant"));
-    iconList->headerItem()->setTextAlignment(0, Qt::AlignCenter);
-    iconList->headerItem()->setText(1, tr("Value"));
-    iconList->headerItem()->setTextAlignment(1, Qt::AlignCenter);
-    iconList->headerItem()->setText(2, tr("Description"));
-    iconList->headerItem()->setTextAlignment(2, Qt::AlignCenter);
-    iconList->setColumnWidth(3, 50);
+    iconList->headerItem()->setText(ConstantColumn, tr("Constant"));
+    iconList->headerItem()->setTextAlignment(ConstantColumn, Qt::AlignCenter);
+    iconList->headerItem()->setText(ValueColumn, tr("Value"));
+    iconList->headerItem()->setTextAlignment(ValueColumn, Qt::AlignCenter);
+    iconList->headerItem()->setText(DescriptionColumn, tr("Description"));
+    iconList->headerItem()->setTextAlignment(DescriptionColumn, Qt::AlignCenter);
+    iconList->setColumnWidth(ValueColumn, 50);
     iconList->setAlternatingRowColors(true);
     iconList->addTopLevelItems(loadStandardPixmaps());
     iconList->setContextMenuPolicy(Qt::CustomContextMenu);
 
-    QVBoxLayout *mainLayout = new QVBoxLayout(this);
+    auto mainLayout = new QVBoxLayout(this);
     mainLayout->setSpacing(6);
     mainLayout->setContentsMargins(11, 11, 11, 11);
     mainLayout->addWidget(iconList);

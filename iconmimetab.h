@@ -24,7 +24,6 @@ private slots:
     void showCustomMenu();
 
 private:
-    //QTreeWidget *IconListMime;
     QTreeWidget *iconList;
 };
 

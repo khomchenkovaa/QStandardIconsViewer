@@ -10,6 +10,7 @@
 #include <QListWidget>
 #include <QPushButton>
 #include <QHBoxLayout>
+#include <QGuiApplication>
 
 /******************************************************************/
 
@@ -136,8 +137,8 @@ void IconFontTab::IconFontTabUi::setupUI(QWidget *parent)
     editFont    = new QLineEdit(parent);
     spinCode    = new QSpinBox(parent);
     spinSize    = new QSpinBox(parent);
-    btnPrevious = new QPushButton(QIcon::fromTheme("go-previous"),QString(), parent);
-    btnNext     = new QPushButton(QIcon::fromTheme("go-next"),QString(), parent);
+    btnPrevious = new QPushButton(QIcon::fromTheme("go-previous"), QString(), parent);
+    btnNext     = new QPushButton(QIcon::fromTheme("go-next"), QString(), parent);
     iconList    = new QListWidget(parent);
 
     editFont->setText(":/ttf/fontawesome.ttf");
